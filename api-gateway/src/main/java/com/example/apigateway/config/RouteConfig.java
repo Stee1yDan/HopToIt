@@ -1,5 +1,6 @@
 package com.example.apigateway.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.gateway.route.RouteLocator;
@@ -9,15 +10,19 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
+@RequiredArgsConstructor
 public class RouteConfig
 {
+
+    private final AuthFilter authFilter;
     @Bean
     public RouteLocator myRoutes(RouteLocatorBuilder builder) {
         return builder.routes()
                 .route(p -> p
                         .path("/get")
-                        .filters(f -> f.addRequestHeader("Hello", "World"))
-                        .uri("http://httpbin.org:80"))
+                        .filters(f -> f.filter(authFilter))
+                        .uri("http://localhost:8111/get")
+                )
 //                .route(p -> p
 //                        .path("/register")
 //                        .uri("lb://user-service/register"))

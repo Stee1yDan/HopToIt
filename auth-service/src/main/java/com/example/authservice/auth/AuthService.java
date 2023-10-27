@@ -53,11 +53,11 @@ public class AuthService
     {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
+                        request.getUsername(),
                         request.getPassword()
                 )
         );
-        var savedUser = userRepository.findByEmail(request.getEmail())
+        var savedUser = userRepository.findUserByUsername(request.getUsername())
                 .orElseThrow();
         var jwtToken = jwtService.generateToken(savedUser);
 
@@ -109,14 +109,14 @@ public class AuthService
             return;
         }
 
-        final String userEmail;
+        final String username;
 
         refreshToken = authHeader.substring(7);
-        userEmail = jwtService.extractUsername(refreshToken);
+        username = jwtService.extractUsername(refreshToken);
 
-        if (userEmail != null)
+        if (username != null)
         {
-            UserDetails userDetails = this.userRepository.findByEmail(userEmail).orElseThrow();
+            UserDetails userDetails = this.userRepository.findUserByUsername(username).orElseThrow();
 
             if (jwtService.isRefreshTokenValid(refreshToken,userDetails))
             {
