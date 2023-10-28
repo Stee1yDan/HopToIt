@@ -12,6 +12,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 
+
 @Entity(name = "users")
 @Data
 @SuperBuilder
@@ -38,6 +39,26 @@ public class User
     @Column(nullable = false)
     private Role role;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user") //
     private List<Token> tokens;
+    private boolean isAccountNonExpired;
+    private boolean isAccountNonLocked;
+    private boolean isCredentialsNonExpired;
+    private boolean isEnabled;
+
+    public User(String id, String username, String email, String password, Role role, List<Token> tokens)
+    {
+        this.id = id;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        this.tokens = tokens;
+
+        this.isAccountNonExpired = true;
+        this.isAccountNonLocked = true;
+        this.isCredentialsNonExpired = true;
+        this.isEnabled = true;
+    }
+
 }
