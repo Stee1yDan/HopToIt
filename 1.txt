@@ -1,1 +1,0 @@
-https://github.com/oril-software/spring-cloud-api-gateway-jwt/tree/main
