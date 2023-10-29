@@ -13,6 +13,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="api-gateway" />
         <module name="auth-service" />
+        <module name="user-service" />
         <module name="demo-module" />
       </profile>
     </annotationProcessing>
@@ -22,6 +23,7 @@
       <module name="api-gateway" options="-parameters" />
       <module name="auth-service" options="-parameters" />
       <module name="demo-module" options="-parameters" />
+      <module name="user-service" options="-parameters" />
     </option>
   </component>
 </project>
