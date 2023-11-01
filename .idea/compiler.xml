@@ -15,6 +15,7 @@
         <module name="auth-service" />
         <module name="user-service" />
         <module name="demo-module" />
+        <module name="email-service" />
       </profile>
     </annotationProcessing>
   </component>
@@ -23,6 +24,7 @@
       <module name="api-gateway" options="-parameters" />
       <module name="auth-service" options="-parameters" />
       <module name="demo-module" options="-parameters" />
+      <module name="email-service" options="-parameters" />
       <module name="user-service" options="-parameters" />
     </option>
   </component>
