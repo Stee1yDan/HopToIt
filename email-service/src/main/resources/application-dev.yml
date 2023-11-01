@@ -1,0 +1,10 @@
+#Server
+SERVER_PORT: 8222
+ACTIVE_PROFILE: dev
+
+#Email Config
+EMAIL_HOST: smtp.mail.ru
+EMAIL_PORT: 587
+EMAIL_ID: hop2it@list.ru
+EMAIL_PASSWORD: 0zvwhiLrPp1rv3VGZaeh
+VERIFY_EMAIL_HOST: http://localhost:${SERVER_PORT}
