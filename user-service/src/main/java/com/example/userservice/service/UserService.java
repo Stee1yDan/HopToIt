@@ -1,25 +1,17 @@
 package com.example.userservice.service;
 
 import com.example.userservice.model.User;
-import com.example.userservice.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
-@RequiredArgsConstructor
-public class UserService
+public interface UserService
 {
-    private final UserRepository userRepository;
+    User registerUser(String username);
+    User updateUser(User user);
+    User findUserByUsername(String username);
+    User saveUser(User user);
 
-    public User saveUser(User user)
-    {
-        return userRepository.save(user);
-    }
+    List<User> findAll();
+    void deleteUser(Long id);
 
-    public List<User> findAll()
-    {
-        return userRepository.findAll();
-    }
 }

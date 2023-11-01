@@ -2,7 +2,7 @@ package com.example.userservice;
 
 import com.example.userservice.model.Portfolio;
 import com.example.userservice.model.User;
-import com.example.userservice.service.UserService;
+import com.example.userservice.service.impl.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -17,7 +17,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class UserServiceApplication {
 
-	private final UserService userService;
+	private final UserServiceImpl userService;
 
 	public static void main(String[] args) {
 		SpringApplication.run(UserServiceApplication.class, args);

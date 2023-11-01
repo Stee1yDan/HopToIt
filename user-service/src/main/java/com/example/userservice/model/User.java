@@ -30,6 +30,6 @@ public class User
     private String firstname;
     private String lastname;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Portfolio> portfolios;
 }
