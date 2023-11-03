@@ -1,10 +1,12 @@
 package com.example.authservice.auth;
 
 import com.example.authservice.config.JwtService;
+import com.example.authservice.repository.ConfirmationRepository;
 import com.example.authservice.repository.TokenRepository;
 import com.example.authservice.repository.UserRepository;
 import com.example.authservice.token.Token;
 import com.example.authservice.token.TokenType;
+import com.example.authservice.user.Confirmation;
 import com.example.authservice.user.Role;
 import com.example.authservice.user.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,6 +29,7 @@ public class AuthService
 {
     private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
+    private final ConfirmationRepository confirmationRepository;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
@@ -36,13 +39,15 @@ public class AuthService
                 .username(request.getUsername())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.USER)
+                .role(Role.USER) //TODO: Role management
                 .isAccountNonLocked(true)
                 .isAccountNonExpired(true)
                 .isCredentialsNonExpired(true)
-                .isEnabled(true)//TODO: Role management
+                .isEnabled(true)
                 .build();
+
         var savedUser = userRepository.save(user);
+        confirmationRepository.save(new Confirmation(user));
         var jwtToken = jwtService.generateToken(user);
 
         saveUserToken(savedUser, jwtToken);
