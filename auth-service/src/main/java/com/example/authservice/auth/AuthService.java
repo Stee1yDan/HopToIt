@@ -21,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Base64;
 
 @Service
@@ -33,7 +34,7 @@ public class AuthService
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-    public AuthResponse register(RegisterRequest request)
+    public void register(RegisterRequest request)
     {
         var user = User.builder()
                 .username(request.getUsername())
@@ -43,7 +44,7 @@ public class AuthService
                 .isAccountNonLocked(true)
                 .isAccountNonExpired(true)
                 .isCredentialsNonExpired(true)
-                .isEnabled(true)
+                .isEnabled(false) // Changed this
                 .build();
 
         var savedUser = userRepository.save(user);
@@ -51,10 +52,6 @@ public class AuthService
         var jwtToken = jwtService.generateToken(user);
 
         saveUserToken(savedUser, jwtToken);
-        return AuthResponse.builder()
-                .accessToken(jwtToken)
-                .refreshToken(Base64.getEncoder().encodeToString(savedUser.getId().getBytes()))
-                .build();
     }
 
 
@@ -142,5 +139,19 @@ public class AuthService
 
 
         }
+    }
+
+    public void enableUser(String confirmation)
+    {
+        var currentConfirmation = confirmationRepository.findByToken(confirmation).get();
+        var user = userRepository.findById(currentConfirmation.getUser().getId()).orElseThrow();
+
+        if (currentConfirmation.getValidUntil().isBefore(LocalDateTime.now()))
+            throw new RuntimeException("Confirmation is Expired");
+
+        user.setEnabled(true);
+
+        userRepository.save(user);
+        confirmationRepository.deleteById(currentConfirmation.getId());
     }
 }

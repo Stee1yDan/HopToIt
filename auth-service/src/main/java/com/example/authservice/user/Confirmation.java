@@ -1,9 +1,11 @@
 package com.example.authservice.user;
 
 import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
@@ -22,14 +24,14 @@ public class Confirmation
     private String token;
     @Temporal(TemporalType.TIMESTAMP)
     @CreatedDate
-    private LocalDateTime timeOfCreation;
+    private LocalDateTime validUntil;
     @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
     private User user;
 
     public Confirmation(User user)
     {
         this.user = user;
-        timeOfCreation = LocalDateTime.now();
+        validUntil = LocalDateTime.now().plusDays(1);
         this.token = UUID.randomUUID().toString();
     }
 

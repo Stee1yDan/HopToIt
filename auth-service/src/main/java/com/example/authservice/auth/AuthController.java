@@ -3,11 +3,9 @@ package com.example.authservice.auth;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
@@ -17,11 +15,20 @@ import java.io.IOException;
 public class AuthController
 {
     private final AuthService authService;
+
+    @GetMapping("/enable/{confirmation}")
+    @ResponseStatus(HttpStatus.OK)
+    public void enable(@PathVariable("confirmation") String confirmation)
+    {
+        authService.enableUser(confirmation);
+    }
+
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(
+    @ResponseStatus(HttpStatus.CREATED)
+    public void register(
             @RequestBody RegisterRequest request
     ) {
-        return ResponseEntity.ok(authService.register(request));
+        authService.register(request);
     }
     @PostMapping("/authenticate")
     public ResponseEntity<AuthResponse> authenticate(
