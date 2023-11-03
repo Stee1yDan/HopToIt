@@ -1,12 +1,14 @@
 package com.example.authservice.auth;
 
 import com.example.authservice.config.JwtService;
+import com.example.authservice.confirmation.ConfirmationMessage;
+import com.example.authservice.kafka.KafkaMessageService;
 import com.example.authservice.repository.ConfirmationRepository;
 import com.example.authservice.repository.TokenRepository;
 import com.example.authservice.repository.UserRepository;
 import com.example.authservice.token.Token;
 import com.example.authservice.token.TokenType;
-import com.example.authservice.user.Confirmation;
+import com.example.authservice.confirmation.Confirmation;
 import com.example.authservice.user.Role;
 import com.example.authservice.user.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,6 +34,8 @@ public class AuthService
     private final TokenRepository tokenRepository;
     private final ConfirmationRepository confirmationRepository;
     private final JwtService jwtService;
+
+    private final KafkaMessageService kafkaMessageService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     public void register(RegisterRequest request)
@@ -48,7 +52,13 @@ public class AuthService
                 .build();
 
         var savedUser = userRepository.save(user);
-        confirmationRepository.save(new Confirmation(user));
+        var confirmation = new Confirmation(user);
+
+        kafkaMessageService.sendMessage(ConfirmationMessage.builder()
+                .email(confirmation.getUser().getEmail())
+                .token(confirmation.getToken()).build());
+
+        confirmationRepository.save(confirmation);
         var jwtToken = jwtService.generateToken(user);
 
         saveUserToken(savedUser, jwtToken);

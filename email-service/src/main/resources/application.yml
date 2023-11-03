@@ -3,6 +3,8 @@ spring:
     active: ${ACTIVE_PROFILE:dev}
   application:
     name: email-service
+  kafka:
+    bootstrapServers: localhost:29092
   mail:
     host: ${EMAIL_HOST}
     port: ${EMAIL_PORT}

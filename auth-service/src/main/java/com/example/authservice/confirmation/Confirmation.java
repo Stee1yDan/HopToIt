@@ -1,5 +1,6 @@
-package com.example.authservice.user;
+package com.example.authservice.confirmation;
 
+import com.example.authservice.user.User;
 import jakarta.persistence.*;
 import jakarta.transaction.Transactional;
 import lombok.Getter;
