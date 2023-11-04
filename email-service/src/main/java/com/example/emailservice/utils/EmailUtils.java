@@ -8,8 +8,8 @@ public class EmailUtils
                 getVerificationUrl(host, token) + "\n\nThe support Team";
     }
 
-    public static String getVerificationUrl(String host, String token)
+    public static String getVerificationUrl(String host, String token) //TODO: Path management
     {
-        return host + "/api/users?token=" + token;
+        return host + "/api/v1/auth/enable/" + token;
     }
 }
