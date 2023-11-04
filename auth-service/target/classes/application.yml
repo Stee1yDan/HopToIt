@@ -27,5 +27,5 @@ application:
         expiration: 604800000 # 7 days
 
 server:
-  port: 8989
+  port: 0
 
