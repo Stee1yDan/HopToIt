@@ -15,10 +15,12 @@
         <module name="auth-service" />
         <module name="user-service" />
         <module name="discovery" />
-        <module name="demo-module" />
         <module name="email-service" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="demo-module" target="17" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">

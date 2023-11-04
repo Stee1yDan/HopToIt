@@ -50,10 +50,10 @@ public class AuthService
                 .isAccountNonLocked(true)
                 .isAccountNonExpired(true)
                 .isCredentialsNonExpired(true)
-                .isEnabled(false) // Changed this
+                .isEnabled(false)
                 .build();
 
-        var savedUser = userRepository.save(user);
+        userRepository.save(user);
         var confirmation = new Confirmation(user);
 
         kafkaMessageService.sendMessage(ConfirmationMessage.builder()
@@ -61,9 +61,6 @@ public class AuthService
                 .token(confirmation.getToken()).build());
 
         confirmationRepository.save(confirmation);
-        var jwtToken = jwtService.generateToken(user);
-
-        saveUserToken(savedUser, jwtToken);
     }
 
 
