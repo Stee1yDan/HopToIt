@@ -1,5 +1,6 @@
 package com.example.authservice.auth;
 
+import com.example.authservice.client.UserClient;
 import com.example.authservice.config.JwtService;
 import com.example.authservice.confirmation.ConfirmationMessage;
 import com.example.authservice.kafka.KafkaMessageService;
@@ -34,8 +35,9 @@ public class AuthService
     private final TokenRepository tokenRepository;
     private final ConfirmationRepository confirmationRepository;
     private final JwtService jwtService;
-
     private final KafkaMessageService kafkaMessageService;
+
+    private final  UserClient userClient;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     public void register(RegisterRequest request)
@@ -153,11 +155,14 @@ public class AuthService
 
     public void enableUser(String confirmation)
     {
+        System.out.println(confirmation);
         var currentConfirmation = confirmationRepository.findByToken(confirmation).get();
-        var user = userRepository.findById(currentConfirmation.getUser().getId()).orElseThrow();
+        var user = currentConfirmation.getUser();
 
         if (currentConfirmation.getValidUntil().isBefore(LocalDateTime.now()))
             throw new RuntimeException("Confirmation is Expired");
+
+        userClient.registerUser(user.getUsername());
 
         user.setEnabled(true);
 

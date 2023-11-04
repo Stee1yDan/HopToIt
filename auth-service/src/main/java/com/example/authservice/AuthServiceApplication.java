@@ -9,12 +9,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootApplication
 @RequiredArgsConstructor
+@EnableFeignClients
 public class AuthServiceApplication
 {
 
@@ -25,22 +27,22 @@ public class AuthServiceApplication
         SpringApplication.run(AuthServiceApplication.class, args);
     }
 
-//    @Bean
-//    CommandLineRunner runner() //TODO: Revoke existing tokens on the launch
-//    {
-//        return args ->
-//        {
-//            userRepository.save
-//                    (
-//                            User.builder()
-//                                    .username("admin")
-//                                    .password(passwordEncoder.encode("admin"))
-//                                    .email("Rhea.Bode21@yahoo.com")
-//                                    .role(Role.ADMIN)
-//                                    .build()
-//                    );
-//        };
-//    }
+    @Bean
+    CommandLineRunner runner() //TODO: Revoke existing tokens on the launch
+    {
+        return args ->
+        {
+            userRepository.save
+                    (
+                            User.builder()
+                                    .username("admin")
+                                    .password(passwordEncoder.encode("admin"))
+                                    .email("Rhea.Bode21@yahoo.com")
+                                    .role(Role.ADMIN)
+                                    .build()
+                    );
+        };
+    }
 
 //    @Bean
 //    CommandLineRunner commandLineRunner(KafkaTemplate<String,String> template)
