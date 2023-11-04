@@ -2,7 +2,7 @@ package com.example.emailservice.kafka;
 
 import com.example.emailservice.confirmation.ConfirmationMessage;
 import com.example.emailservice.service.EmailService;
-import com.example.emailservice.util.JsonMapper;
+import com.example.emailservice.utils.JsonMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;

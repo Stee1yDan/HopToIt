@@ -30,8 +30,12 @@ public class RouteConfig
 //                        .path("/getAllUsers")
 //                        .uri("lb://user-service/getAllUsers"))
                 .route(p -> p
+                        .path("/api/v1/users/**")
+                        .filters(f -> f.filter(authFilter))
+                        .uri("lb://user-service"))
+                .route(p -> p
                         .path("/api/v1/auth/**")
-                        .uri("http://localhost:8989"))
+                        .uri("lb://auth-service"))
                 .build();
     }
 

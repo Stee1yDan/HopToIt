@@ -17,4 +17,4 @@ spring:
     name: user-service
 
 server:
-  port: 4358
+  port: 0

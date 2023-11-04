@@ -1,4 +1,4 @@
-package com.example.emailservice.util;
+package com.example.emailservice.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
