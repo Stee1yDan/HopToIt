@@ -39,6 +39,10 @@ public class AuthServiceApplication
                                     .password(passwordEncoder.encode("admin"))
                                     .email("Rhea.Bode21@yahoo.com")
                                     .role(Role.ADMIN)
+                                    .isEnabled(true)
+                                    .isAccountNonExpired(true)
+                                    .isCredentialsNonExpired(true)
+                                    .isAccountNonLocked(true)
                                     .build()
                     );
         };

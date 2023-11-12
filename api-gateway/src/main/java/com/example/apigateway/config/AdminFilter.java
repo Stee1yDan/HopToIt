@@ -1,7 +1,8 @@
 package com.example.apigateway.config;
 
+import com.example.apigateway.repository.UserRepository;
+import com.example.apigateway.user.Role;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.http.HttpStatus;
@@ -13,35 +14,33 @@ import reactor.core.publisher.Mono;
 
 @Component
 @RequiredArgsConstructor
-public class AuthFilter implements GatewayFilter
+public class AdminFilter implements GatewayFilter
 {
+
     private final JwtService jwtService;
+    private final UserRepository userRepository;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain)
     {
         ServerHttpRequest request = exchange.getRequest();
 
-        if (authMissing(request)) {
-            return onError(exchange, HttpStatus.UNAUTHORIZED);
-        }
-
         final String token = request.getHeaders().getOrEmpty("Authorization").get(0).substring(7);
+        final String username = jwtService.extractUsername(token);
 
-        if (!jwtService.isTokenValid(token)) {
+        Role userRole = userRepository.findUserByUsername(username).get().getRole();
+
+        if (!userRole.equals(Role.ADMIN))
+        {
             return onError(exchange, HttpStatus.UNAUTHORIZED);
         }
-
         return chain.filter(exchange);
     }
 
-    protected Mono<Void> onError(ServerWebExchange exchange, HttpStatus httpStatus) {
+    protected Mono<Void> onError(ServerWebExchange exchange, HttpStatus httpStatus)
+    {
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(httpStatus);
         return response.setComplete();
-    }
-
-    protected boolean authMissing(ServerHttpRequest request) {
-        return !request.getHeaders().containsKey("Authorization");
     }
 }

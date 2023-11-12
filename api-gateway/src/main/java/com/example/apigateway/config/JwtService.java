@@ -50,12 +50,6 @@ public class JwtService
         return isTokenNonExpired(token) && isTokenValid;
     }
 
-    public boolean isRefreshTokenValid(String token)
-    {
-        final String username = extractUsername(token);
-        return isTokenNonExpired(token);
-    }
-
     public boolean isTokenNonExpired(String token)
     {
         return extractExpiration(token).after(new Date());
