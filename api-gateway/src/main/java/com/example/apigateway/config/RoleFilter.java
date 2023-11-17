@@ -3,6 +3,7 @@ package com.example.apigateway.config;
 import com.example.apigateway.repository.UserRepository;
 import com.example.apigateway.user.Role;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.http.HttpStatus;
@@ -13,12 +14,15 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 @Component
+@Setter
 @RequiredArgsConstructor
-public class AdminFilter implements GatewayFilter
+public class RoleFilter implements GatewayFilter
 {
 
     private final JwtService jwtService;
     private final UserRepository userRepository;
+
+    private Role role;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain)
@@ -30,7 +34,7 @@ public class AdminFilter implements GatewayFilter
 
         Role userRole = userRepository.findUserByUsername(username).get().getRole();
 
-        if (!userRole.equals(Role.ADMIN))
+        if (!userRole.equals(role))
         {
             return onError(exchange, HttpStatus.UNAUTHORIZED);
         }

@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.web.server.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -15,6 +16,18 @@ import java.io.IOException;
 public class AuthController
 {
     private final AuthService authService;
+
+    @GetMapping("/connect")
+    public ResponseEntity<String> sayHello() {
+        return ResponseEntity.ok("Hello from secured endpoint");
+    }
+
+    @GetMapping("/csrf")
+    public void getCsrfToken(HttpServletRequest request) {
+        // https://github.com/spring-projects/spring-security/issues/12094#issuecomment-1294150717
+        CsrfToken csrfToken = (CsrfToken) request.getAttribute(CsrfToken.class.getName());
+        csrfToken.getToken();
+    }
 
     @GetMapping("/enable/{confirmation}")
     @ResponseStatus(HttpStatus.OK)

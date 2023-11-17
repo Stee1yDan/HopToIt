@@ -1,5 +1,6 @@
 package com.example.apigateway.config;
 
+import com.example.apigateway.user.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
@@ -12,9 +13,12 @@ public class RouteConfig
 {
 
     private final AuthFilter authFilter;
-    private final AdminFilter adminFilter;
+    private final RoleFilter adminFilter;
     @Bean
-    public RouteLocator myRoutes(RouteLocatorBuilder builder) {
+    public RouteLocator myRoutes(RouteLocatorBuilder builder)
+    {
+        adminFilter.setRole(Role.ADMIN);
+
         return builder.routes()
                 .route(p -> p
                         .path("/api/v1/users/**")
