@@ -12,7 +12,7 @@ import java.util.List;
 @Component
 @Setter
 @AllArgsConstructor
-public class RoleFilterFactory
+public class FilterFactory
 {
     private final JwtService jwtService;
     private final UserRepository userRepository;
@@ -20,5 +20,10 @@ public class RoleFilterFactory
     public RoleFilter getRoleFilter(List<Role> roles)
     {
         return new RoleFilter(this.jwtService,this.userRepository,roles);
+    }
+
+    public AuthFilter getAuthFilter()
+    {
+        return new AuthFilter(this.jwtService);
     }
 }

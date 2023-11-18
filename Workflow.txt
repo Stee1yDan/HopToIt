@@ -1,0 +1,20 @@
+Add eureka configuration to all services (Don’t forget email-service DEV profile)
+Change email-service properties to “validate”
+Remove register response
+Add kafka to email service
+Implement roles for database
+Add feign clients
+Add way to confirm email in the auth service
+Configure API gateway for email verification
+Add profiles for application.yml files
+Add crsf configuration
+Add custom header for security (hashed use id)
+Write tests (ughh)
+Add Eureka admin page
+Add Zippkin admin page
+Figure it how configuration profiles will affect work with configuration server
+If sync communication fails, DO SOMETHING
+Add circuit breaker
+Replace AuthFilter with factory
+Clean up auth service
+Clean up JwtService in gateway

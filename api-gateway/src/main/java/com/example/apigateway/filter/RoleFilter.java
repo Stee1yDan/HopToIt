@@ -22,7 +22,7 @@ public class RoleFilter implements GatewayFilter
 {
     private JwtService jwtService;
     private UserRepository userRepository;
-    private List<Role> accessRoles = List.of(Role.USER, Role.MANAGER, Role.ADMIN);
+    private List<Role> accessRoles;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain)
