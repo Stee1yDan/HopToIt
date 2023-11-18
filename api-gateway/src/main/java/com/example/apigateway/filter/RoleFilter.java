@@ -1,7 +1,11 @@
-package com.example.apigateway.config;
+package com.example.apigateway.filter;
 
+import com.example.apigateway.config.JwtService;
+import com.example.apigateway.repository.UserRepository;
+import com.example.apigateway.user.Role;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.Setter;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.http.HttpStatus;
@@ -11,37 +15,38 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-@Component
-@RequiredArgsConstructor
-public class AuthFilter implements GatewayFilter
+import java.util.List;
+
+@AllArgsConstructor
+public class RoleFilter implements GatewayFilter
 {
-    private final JwtService jwtService;
+    private JwtService jwtService;
+    private UserRepository userRepository;
+    private List<Role> accessRoles = List.of(Role.USER, Role.MANAGER, Role.ADMIN);
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain)
     {
         ServerHttpRequest request = exchange.getRequest();
 
-        if (authMissing(request)) {
-            return onError(exchange, HttpStatus.UNAUTHORIZED);
-        }
+        System.out.println(request.getHeaders());
 
         final String token = request.getHeaders().getOrEmpty("Authorization").get(0).substring(7);
+        final String username = jwtService.extractUsername(token);
 
-        if (!jwtService.isTokenValid(token)) {
+        Role userRole = userRepository.findUserByUsername(username).get().getRole();
+
+        if (!accessRoles.contains(userRole))
+        {
             return onError(exchange, HttpStatus.UNAUTHORIZED);
         }
-
         return chain.filter(exchange);
     }
 
-    protected Mono<Void> onError(ServerWebExchange exchange, HttpStatus httpStatus) {
+    protected Mono<Void> onError(ServerWebExchange exchange, HttpStatus httpStatus)
+    {
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(httpStatus);
         return response.setComplete();
-    }
-
-    protected boolean authMissing(ServerHttpRequest request) {
-        return !request.getHeaders().containsKey("Authorization");
     }
 }

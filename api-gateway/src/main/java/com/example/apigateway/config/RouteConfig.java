@@ -1,5 +1,7 @@
 package com.example.apigateway.config;
 
+import com.example.apigateway.filter.AuthFilter;
+import com.example.apigateway.filter.RoleFilterFactory;
 import com.example.apigateway.user.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.gateway.route.RouteLocator;
@@ -7,18 +9,18 @@ import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.List;
+
 @Configuration
 @RequiredArgsConstructor
 public class RouteConfig
 {
 
     private final AuthFilter authFilter;
-    private final RoleFilter adminFilter;
+    private final RoleFilterFactory roleFilterFactory;
     @Bean
     public RouteLocator myRoutes(RouteLocatorBuilder builder)
     {
-        adminFilter.setRole(Role.ADMIN);
-
         return builder.routes()
                 .route(p -> p
                         .path("/api/v1/users/**")
@@ -31,7 +33,7 @@ public class RouteConfig
                         .path("/eureka")
                         .filters(f -> f
                                 .filter(authFilter)
-                                .filter(adminFilter)
+                                .filter(roleFilterFactory.getRoleFilter(List.of(Role.ADMIN)))
                                 .rewritePath("/eureka","/"))
                         .uri("http://localhost:8761"))
                 .build();
