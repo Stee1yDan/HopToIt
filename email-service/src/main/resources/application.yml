@@ -26,6 +26,11 @@ spring:
     verify:
       host: ${VERIFY_EMAIL_HOST}
 
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+
 
 server:
   port: 0
