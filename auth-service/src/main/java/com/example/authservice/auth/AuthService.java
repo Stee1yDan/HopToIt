@@ -81,7 +81,7 @@ public class AuthService
 
         return AuthResponse.builder()
                 .accessToken(jwtToken)
-                .refreshToken(Base64.getEncoder().encodeToString(savedUser.getId().getBytes()))
+                .userToken(Base64.getEncoder().encodeToString(savedUser.getId().getBytes()))
                 .build();
     }
 
@@ -112,43 +112,6 @@ public class AuthService
         tokenRepository.saveAll(validUserTokens);
     }
 
-    public void refreshToken(
-            HttpServletRequest request,
-            HttpServletResponse response) throws IOException
-    {
-        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        final String refreshToken;
-
-        if (authHeader == null || !authHeader.startsWith("Bearer "))
-        {
-            return;
-        }
-
-        final String username;
-
-        refreshToken = authHeader.substring(7);
-        username = jwtService.extractUsername(refreshToken);
-
-        if (username != null)
-        {
-            UserDetails userDetails = this.userRepository.findUserByUsername(username).orElseThrow();
-
-            if (jwtService.isRefreshTokenValid(refreshToken,userDetails))
-            {
-                var accessToken = jwtService.generateToken(userDetails);
-                revokeAllUserTokens((User) userDetails);
-                saveUserToken((User) userDetails, accessToken);
-                var authResponse = AuthResponse.builder()
-                        .accessToken(accessToken)
-                        .refreshToken(refreshToken)
-                        .build();
-
-                new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
-            }
-
-
-        }
-    }
 
     public void enableUser(String confirmation)
     {
