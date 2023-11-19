@@ -16,5 +16,10 @@ spring:
   application:
     name: user-service
 
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+
 server:
   port: 0

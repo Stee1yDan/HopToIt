@@ -13,7 +13,7 @@ public class ConfirmationController
     private final EmailService emailService;
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void sendEmail(@RequestBody ConfirmationRequest request) //TODO: Validate token?
+    public void sendEmail(@RequestBody ConfirmationRequest request)
     {
         emailService.sendBasicEmailMessage(request.getEmail(),request.getToken());
     }

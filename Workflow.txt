@@ -11,10 +11,15 @@ Add crsf configuration
 Add custom header for security (hashed use id)
 Write tests (ughh)
 Add Eureka admin page
-Add Zippkin admin page
+Add Zipkin admin page
 Figure it how configuration profiles will affect work with configuration server
-If sync communication fails, DO SOMETHING
+If sync communication while registering user fails, DO SOMETHING
 Add circuit breaker
 Replace AuthFilter with factory
 Clean up auth service
 Clean up JwtService in gateway
+Add Kafka Tracing
+Across-service tracing
+Decrease sampling rate
+Remove expired tokens automatically
+
