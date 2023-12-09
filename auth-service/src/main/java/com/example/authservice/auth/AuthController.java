@@ -36,6 +36,12 @@ public class AuthController
         authService.enableUser(confirmation);
     }
 
+    @GetMapping("/check/{username}/{role}")
+    public ResponseEntity<Boolean> doesUserHasRole(@PathVariable("username") String username, @PathVariable("role") String role)
+    {
+        return ResponseEntity.ok(authService.doesUserHasRole(username,role));
+    }
+
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     public void register(
