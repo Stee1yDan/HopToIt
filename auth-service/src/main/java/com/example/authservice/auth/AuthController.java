@@ -17,18 +17,6 @@ public class AuthController
 {
     private final AuthService authService;
 
-    @GetMapping("/connect")
-    public ResponseEntity<String> sayHello() {
-        return ResponseEntity.ok("Hello from secured endpoint");
-    }
-
-    @GetMapping("/csrf")
-    public void getCsrfToken(HttpServletRequest request) {
-        // https://github.com/spring-projects/spring-security/issues/12094#issuecomment-1294150717
-        CsrfToken csrfToken = (CsrfToken) request.getAttribute(CsrfToken.class.getName());
-        csrfToken.getToken();
-    }
-
     @GetMapping("/enable/{confirmation}")
     @ResponseStatus(HttpStatus.OK)
     public void enable(@PathVariable("confirmation") String confirmation)
@@ -40,9 +28,13 @@ public class AuthController
     public ResponseEntity<Boolean> doesUserHasRole(@PathVariable("username") String username,
                                                    @PathVariable("role") String role)
     {
-        System.out.println(username + " " + role);
-        System.out.println(authService.doesUserHasRole(username,role));
         return ResponseEntity.ok(authService.doesUserHasRole(username,role));
+    }
+
+    @GetMapping("/check/{token}")
+    public ResponseEntity<Boolean> isTokenValid(@PathVariable("token") String token)
+    {
+        return ResponseEntity.ok(authService.isTokenValid(token));
     }
 
     @PostMapping("/register")

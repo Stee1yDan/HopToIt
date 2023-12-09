@@ -1,11 +1,7 @@
 package com.example.apigateway.config;
 
-import com.example.apigateway.repository.TokenRepository;
-import com.example.apigateway.repository.UserRepository;
-import com.example.apigateway.user.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +18,6 @@ public class JwtService
 {
     @Value("${application.security.jwt.secretKey}")
     private String secretKey;
-    private final TokenRepository tokenRepository;
-    private final UserRepository userRepository;
     public String extractUsername(String token)
     {
         return extractClaim(token, Claims::getSubject);
@@ -33,26 +27,6 @@ public class JwtService
     {
         final Claims claims = extractAllClaims(token);
         return claimResolver.apply(claims);
-    }
-    public boolean isTokenValid(String token) //TODO: Check if user is valid
-    {
-//        final String username = extractUsername(token);
-//
-//        User user = userRepository.findUserByUsername(username).orElse(null);
-//
-//        if (user == null) return false;
-//
-//        if (!user.getTokens().contains(token)) return false;
-
-        var isTokenValid = tokenRepository.findByToken(token)
-                .map(t -> !t.isExpired() && !t.isRevoked())
-                .orElse(false);
-        return isTokenNonExpired(token) && isTokenValid;
-    }
-
-    public boolean isTokenNonExpired(String token)
-    {
-        return extractExpiration(token).after(new Date());
     }
 
     private Date extractExpiration(String token)

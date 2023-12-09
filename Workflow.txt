@@ -22,4 +22,7 @@ Add Kafka Tracing
 Across-service tracing
 Decrease sampling rate
 Remove expired tokens automatically
+Make this shit SOLID
+Make this shit DRY
+?Extract token thing to external service?
 

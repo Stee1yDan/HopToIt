@@ -134,4 +134,9 @@ public class AuthService
     {
         return role.equals(userRepository.findUserByUsername(username).get().getRole().toString());
     }
+
+    public boolean isTokenValid(String token)
+    {
+        return jwtService.isTokenValid(token);
+    }
 }

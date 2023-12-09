@@ -1,15 +1,11 @@
 package com.example.apigateway.filter;
 
 import com.example.apigateway.config.JwtService;
-import com.example.apigateway.repository.UserRepository;
 import com.example.apigateway.user.Role;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
-
-import java.util.List;
 
 @Component
 @Setter
@@ -26,6 +22,6 @@ public class FilterFactory
 
     public AuthFilter getAuthFilter()
     {
-        return new AuthFilter(this.jwtService);
+        return new AuthFilter();
     }
 }
