@@ -9,13 +9,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 @RequiredArgsConstructor
+@Component
 public class AuthFilter implements GatewayFilter
 {
-    private final JwtService jwtService;
+    private WebClient webClient;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain)
@@ -28,11 +30,20 @@ public class AuthFilter implements GatewayFilter
 
         final String token = request.getHeaders().getOrEmpty("Authorization").get(0).substring(7);
 
-        if (!jwtService.isTokenValid(token)) {
-            return onError(exchange, HttpStatus.UNAUTHORIZED);
-        }
+        String tokenUri = "http://localhost:8222/api/v1/auth/check/%s";
 
-        return chain.filter(exchange);
+        webClient = WebClient.builder().build();
+
+        return webClient
+                .get()
+                .uri(String.format(tokenUri,token))
+                .retrieve()
+                .bodyToMono(Boolean.class)
+                .flatMap(response -> {
+                    if(Boolean.FALSE.equals(response))
+                        return Mono.error(new RuntimeException("un authorized access to application"));
+                    return chain.filter(exchange);
+                });
     }
 
     protected Mono<Void> onError(ServerWebExchange exchange, HttpStatus httpStatus) {

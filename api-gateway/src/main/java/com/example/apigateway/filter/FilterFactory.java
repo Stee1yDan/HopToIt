@@ -1,29 +1,27 @@
 package com.example.apigateway.filter;
 
 import com.example.apigateway.config.JwtService;
-import com.example.apigateway.repository.UserRepository;
 import com.example.apigateway.user.Role;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
+import org.springframework.web.reactive.function.client.WebClient;
 
 @Component
 @Setter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class FilterFactory
 {
     private final JwtService jwtService;
-    private final UserRepository userRepository;
+    private WebClient.Builder webClient;
 
-    public RoleFilter getRoleFilter(List<Role> roles)
+    public RoleFilter getRoleFilter(Role role)
     {
-        return new RoleFilter(this.jwtService,this.userRepository,roles);
+        return new RoleFilter(this.jwtService,role);
     }
 
     public AuthFilter getAuthFilter()
     {
-        return new AuthFilter(this.jwtService);
+        return new AuthFilter();
     }
 }

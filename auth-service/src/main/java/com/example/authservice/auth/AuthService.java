@@ -129,4 +129,14 @@ public class AuthService
         userRepository.save(user);
         confirmationRepository.deleteById(currentConfirmation.getId());
     }
+
+    public boolean doesUserHasRole(String username, String role)
+    {
+        return role.equals(userRepository.findUserByUsername(username).get().getRole().toString());
+    }
+
+    public boolean isTokenValid(String token)
+    {
+        return jwtService.isTokenValid(token);
+    }
 }

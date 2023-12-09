@@ -60,6 +60,14 @@ public class JwtService
                 .compact();
     }
 
+    public boolean isTokenValid(String token)
+    {
+        var isTokenValid = tokenRepository.findByToken(token)
+                .map(t -> !t.isExpired() && !t.isRevoked())
+                .orElse(false);
+        return isTokenNonExpired(token) && isTokenValid;
+    }
+
     public boolean isTokenValid(String token, UserDetails userDetails)
     {
         var isTokenValid = tokenRepository.findByToken(token)

@@ -1,6 +1,7 @@
 package com.example.apigateway.config;
 
 import com.example.apigateway.filter.FilterFactory;
+import com.example.apigateway.filter.RoleFilter;
 import com.example.apigateway.user.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.gateway.route.RouteLocator;
@@ -31,7 +32,7 @@ public class RouteConfig
                         .path("/eureka")
                         .filters(f -> f
                                 .filter(filterFactory.getAuthFilter())
-                                .filter(filterFactory.getRoleFilter(List.of(Role.ADMIN)))
+                                .filter(filterFactory.getRoleFilter(Role.ADMIN))
                                 .rewritePath("/eureka","/"))
                         .uri("http://localhost:8761"))
                 .build();
