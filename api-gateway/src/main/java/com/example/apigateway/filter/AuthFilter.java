@@ -13,6 +13,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 @RequiredArgsConstructor
+@Component
 public class AuthFilter implements GatewayFilter
 {
     private final JwtService jwtService;

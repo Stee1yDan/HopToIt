@@ -37,8 +37,11 @@ public class AuthController
     }
 
     @GetMapping("/check/{username}/{role}")
-    public ResponseEntity<Boolean> doesUserHasRole(@PathVariable("username") String username, @PathVariable("role") String role)
+    public ResponseEntity<Boolean> doesUserHasRole(@PathVariable("username") String username,
+                                                   @PathVariable("role") String role)
     {
+        System.out.println(username + " " + role);
+        System.out.println(authService.doesUserHasRole(username,role));
         return ResponseEntity.ok(authService.doesUserHasRole(username,role));
     }
 
