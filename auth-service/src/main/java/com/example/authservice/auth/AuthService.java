@@ -1,9 +1,10 @@
 package com.example.authservice.auth;
 
+import com.example.authservice.interfaces.IAuthService;
 import com.example.authservice.client.UserClient;
-import com.example.authservice.config.JwtService;
 import com.example.authservice.confirmation.ConfirmationMessage;
-import com.example.authservice.kafka.KafkaMessageService;
+import com.example.authservice.interfaces.IMessageService;
+import com.example.authservice.interfaces.ITokenService;
 import com.example.authservice.repository.ConfirmationRepository;
 import com.example.authservice.repository.TokenRepository;
 import com.example.authservice.repository.UserRepository;
@@ -12,34 +13,30 @@ import com.example.authservice.token.TokenType;
 import com.example.authservice.confirmation.Confirmation;
 import com.example.authservice.user.Role;
 import com.example.authservice.user.User;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Base64;
 
 @Service
 @RequiredArgsConstructor
-public class AuthService
+public class AuthService implements IAuthService
 {
     private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
     private final ConfirmationRepository confirmationRepository;
-    private final JwtService jwtService;
-    private final KafkaMessageService kafkaMessageService;
+    private final ITokenService tokenService;
+    private final IMessageService messageService;
 
-    private final  UserClient userClient;
+    private final UserClient userClient;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+
+    @Override
     public void register(RegisterRequest request)
     {
         var user = User.builder()
@@ -56,14 +53,14 @@ public class AuthService
         userRepository.save(user);
         var confirmation = new Confirmation(user);
 
-        kafkaMessageService.sendMessage(ConfirmationMessage.builder()
+        messageService.sendMessage(ConfirmationMessage.builder()
                 .email(confirmation.getUser().getEmail())
                 .token(confirmation.getToken()).build());
 
         confirmationRepository.save(confirmation);
     }
 
-
+    @Override
     public AuthResponse authenticate(AuthRequest request)
     {
         authenticationManager.authenticate(
@@ -74,7 +71,7 @@ public class AuthService
         );
         var savedUser = userRepository.findUserByUsername(request.getUsername())
                 .orElseThrow();
-        var jwtToken = jwtService.generateToken(savedUser);
+        var jwtToken = tokenService.generateToken(savedUser);
 
         revokeAllUserTokens(savedUser);
         saveUserToken(savedUser, jwtToken);
@@ -85,7 +82,8 @@ public class AuthService
                 .build();
     }
 
-    private void saveUserToken(User savedUser, String jwtToken)
+    @Override
+    public void saveUserToken(User savedUser, String jwtToken)
     {
         Token token = Token.builder()
                 .token(jwtToken)
@@ -98,7 +96,9 @@ public class AuthService
         tokenRepository.save(token);
     }
 
-    private void revokeAllUserTokens(User user)
+
+    @Override
+    public void revokeAllUserTokens(User user)
     {
         var validUserTokens = tokenRepository.findAllValidTokensByUser(user.getId());
         if (validUserTokens.isEmpty()) return;
@@ -112,7 +112,7 @@ public class AuthService
         tokenRepository.saveAll(validUserTokens);
     }
 
-
+    @Override
     public void enableUser(String confirmation)
     {
         System.out.println(confirmation);
@@ -130,13 +130,10 @@ public class AuthService
         confirmationRepository.deleteById(currentConfirmation.getId());
     }
 
+    @Override
     public boolean doesUserHasRole(String username, String role)
     {
         return role.equals(userRepository.findUserByUsername(username).get().getRole().toString());
     }
 
-    public boolean isTokenValid(String token)
-    {
-        return jwtService.isTokenValid(token);
-    }
 }

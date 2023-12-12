@@ -46,7 +46,7 @@ public class JwtAuthFilter extends OncePerRequestFilter
         {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail); //TODO: Why do we need to load user details when we only use username to validate tokems
 
-            if (jwtService.isTokenValid(jwtToken,userDetails))
+            if (jwtService.isTokenValidByUser(jwtToken,userDetails))
             {
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null,userDetails.getAuthorities());

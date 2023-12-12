@@ -1,14 +1,10 @@
 package com.example.authservice.auth;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import com.example.authservice.config.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.web.server.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -16,6 +12,7 @@ import java.io.IOException;
 public class AuthController
 {
     private final AuthService authService;
+    private final JwtService jwtService;
 
     @GetMapping("/enable/{confirmation}")
     @ResponseStatus(HttpStatus.OK)
@@ -34,7 +31,7 @@ public class AuthController
     @GetMapping("/check/{token}")
     public ResponseEntity<Boolean> isTokenValid(@PathVariable("token") String token)
     {
-        return ResponseEntity.ok(authService.isTokenValid(token));
+        return ResponseEntity.ok(jwtService.isTokenValid(token));
     }
 
     @PostMapping("/register")

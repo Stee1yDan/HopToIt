@@ -13,7 +13,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 @RequiredArgsConstructor
-public class RoleFilter implements GatewayFilter
+public class RoleFilter implements GatewayFilter //TODO: Replace with factory
 {
     private final JwtService jwtService;
     private final Role role;
@@ -31,8 +31,6 @@ public class RoleFilter implements GatewayFilter
         String roleUri = "http://localhost:8222/api/v1/auth/check/%s/%s";
 
         webClient = WebClient.builder().build();
-
-        System.out.println(String.format(roleUri,username,role.toString()));
 
         return webClient
                 .get()

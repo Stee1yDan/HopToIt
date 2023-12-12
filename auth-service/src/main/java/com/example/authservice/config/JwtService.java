@@ -1,5 +1,6 @@
 package com.example.authservice.config;
 
+import com.example.authservice.interfaces.ITokenService;
 import com.example.authservice.repository.TokenRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -20,13 +21,10 @@ import java.util.function.Function;
 
 @Service
 @RequiredArgsConstructor
-public class JwtService
+public class JwtService implements ITokenService
 {
-
-
     @Value("${application.security.jwt.secretKey}")
     private String secretKey;
-
     @Value("${application.security.jwt.expiration}")
     private Long jwtExpiration;
     private final TokenRepository tokenRepository;
@@ -41,10 +39,12 @@ public class JwtService
         return claimResolver.apply(claims);
     }
 
+    @Override
     public String generateToken(UserDetails userDetails) {
         return generateToken(new HashMap<>(), userDetails);
     }
 
+    @Override
     public String generateToken(Map<String, Objects> extraClaims, UserDetails userDetails)
     {
         return buildToken(extraClaims, userDetails, jwtExpiration);
@@ -59,7 +59,7 @@ public class JwtService
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
-
+    @Override
     public boolean isTokenValid(String token)
     {
         var isTokenValid = tokenRepository.findByToken(token)
@@ -67,17 +67,14 @@ public class JwtService
                 .orElse(false);
         return isTokenNonExpired(token) && isTokenValid;
     }
-
-    public boolean isTokenValid(String token, UserDetails userDetails)
+    @Override
+    public boolean isTokenValidByUser(String token, UserDetails userDetails)
     {
-        var isTokenValid = tokenRepository.findByToken(token)
-                .map(t -> !t.isExpired() && !t.isRevoked())
-                .orElse(false);
         final String username = extractUsername(token);
-        return username.equals(userDetails.getUsername()) && isTokenNonExpired(token) && isTokenValid;
+        return username.equals(userDetails.getUsername()) && isTokenValid(token);
     }
 
-    public boolean isTokenNonExpired(String token)
+    private boolean isTokenNonExpired(String token)
     {
         return extractExpiration(token).after(new Date());
     }
