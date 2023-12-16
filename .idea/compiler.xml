@@ -20,6 +20,8 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="demo-module" target="17" />
+      <module name="Hop2It" target="19" />
+      <module name="microservices-new" target="17" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">

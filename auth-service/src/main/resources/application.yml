@@ -16,7 +16,7 @@ spring:
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   kafka:
-    bootstrapServers: localhost:29092
+    bootstrapServers: localhost:9092
 
 application:
   security:
