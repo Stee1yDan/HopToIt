@@ -2,7 +2,7 @@ spring:
   application:
     name: auth-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/jwt_security
+    url: jdbc:postgresql://localhost:5431/auth-service
     username: postgres
     password: SpiralStaircase
     driver-class-name: org.postgresql.Driver
