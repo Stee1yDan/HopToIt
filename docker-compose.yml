@@ -77,47 +77,21 @@ services:
       - zipkin
 
   api-gateway:
-    image: jabodav/api-gateway:latest
+    image: api-gateway:latest
     container_name: api-gateway
     ports:
       - "8222:8222"
     expose:
       - "8222"
     environment:
+      - SPRING_PROFILES_ACTIVE=docker
       - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY= TRACE
     depends_on:
       - zipkin
       - discovery
+    command: --spring.profiles.active=docker
 
-  auth-service:
-    container_name: auth-service
-    image: jabodav/auth-service:latest
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-auth:5431/auth-service
-    depends_on:
-      - zipkin
-      - discovery
-      - api-gateway
-      - postgres-auth
 
-  email-service:
-    container_name: email-service
-    image: jabodav/email-service:latest
-    depends_on:
-      - zipkin
-      - discovery
-      - broker
-
-  user-service:
-    container_name: user-service
-    image: jabodav/user-service:latest
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-user:5433/user-service
-    depends_on:
-      - zipkin
-      - discovery
-      - postgres-user
 
 
 
