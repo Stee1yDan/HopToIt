@@ -1,14 +1,6 @@
 ---
 version: '2'
 services:
-  zookeeper:
-    image: confluentinc/cp-zookeeper:latest
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-    ports:
-      - 22181:2181
-
   zipkin:
     container_name: zipkin
     image: openzipkin/zipkin
@@ -16,6 +8,15 @@ services:
       - "9411:9411"
     networks:
       - zipkin
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.0.1
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
 
   broker:
     image: confluentinc/cp-kafka:7.0.1
@@ -32,7 +33,6 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-
 
   postgres-auth:
     container_name: postgres-auth
@@ -65,6 +65,60 @@ services:
     ports:
       - "5433:5433"
     command: -p 5433
+
+  discovery:
+    image: jabodav/discovery:latest
+    container_name: discovery
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "8761:8761"
+    depends_on:
+      - zipkin
+
+  api-gateway:
+    image: jabodav/api-gateway:latest
+    container_name: api-gateway
+    ports:
+      - "8222:8222"
+    expose:
+      - "8222"
+    environment:
+      - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY= TRACE
+    depends_on:
+      - zipkin
+      - discovery
+
+  auth-service:
+    container_name: auth-service
+    image: jabodav/auth-service:latest
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-auth:5431/auth-service
+    depends_on:
+      - zipkin
+      - discovery
+      - api-gateway
+      - postgres-auth
+
+  email-service:
+    container_name: email-service
+    image: jabodav/email-service:latest
+    depends_on:
+      - zipkin
+      - discovery
+      - broker
+
+  user-service:
+    container_name: user-service
+    image: jabodav/user-service:latest
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-user:5433/user-service
+    depends_on:
+      - zipkin
+      - discovery
+      - postgres-user
+
 
 
 networks:
