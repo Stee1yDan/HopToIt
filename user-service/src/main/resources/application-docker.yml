@@ -1,8 +1,6 @@
 spring:
-  application:
-    name: auth-service
   datasource:
-    url: jdbc:postgresql://localhost:5431/auth-service
+    url: jdbc:postgresql://host.docker.internal:5433/user-service
     username: postgres
     password: SpiralStaircase
     driver-class-name: org.postgresql.Driver
@@ -15,14 +13,8 @@ spring:
         format_sql: true
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-  kafka:
-    bootstrapServers: localhost:9092
-
-application:
-  security:
-    jwt:
-      secretKey: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
-      expiration: 86400000 # a day
+  application:
+    name: user-service
 
 eureka:
   instance:
@@ -31,13 +23,7 @@ eureka:
     registerWithEureka: true
     fetchRegistry: true
     serviceUrl:
-      defaultZone: http://eureka:password@localhost:8761/eureka
-
-management:
-  tracing:
-    sampling:
-      probability: 1.0
+      defaultZone: http://eureka:password@host.docker.internal:8761/eureka
 
 server:
   port: 0
-
