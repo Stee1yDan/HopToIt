@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://host.docker.internal:5433/user-service
+    username: postgres
+    password: SpiralStaircase
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  application:
+    name: user-service
+
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://eureka:password@host.docker.internal:8761/eureka
+
+server:
+  port: 0
