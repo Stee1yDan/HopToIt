@@ -91,6 +91,29 @@ services:
       - discovery
     command: --spring.profiles.active=docker
 
+  user-service:
+    image: user-service:latest
+    container_name: user-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - discovery
+      - postgres-user
+      - zipkin
+    command: --spring.profiles.active=docker
+
+  auth-service:
+    image: auth-service:latest
+    container_name: auth-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - discovery
+      - postgres-auth
+      - zipkin
+      - broker
+    command: --spring.profiles.active=docker
+
 
 
 
