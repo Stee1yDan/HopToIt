@@ -114,6 +114,17 @@ services:
       - broker
     command: --spring.profiles.active=docker
 
+  email-service:
+    image: email-service:latest
+    container_name: email-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - discovery
+      - zipkin
+      - broker
+    command: --spring.profiles.active=docker
+
 
 
 

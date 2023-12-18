@@ -1,0 +1,45 @@
+spring:
+  application:
+    name: email-service
+  kafka:
+    bootstrapServers: broker:29092
+  mail:
+    host: smtp.mail.ru
+    port: 587
+    username: hop2it@list.ru
+    password: 0zvwhiLrPp1rv3VGZaeh
+    default-encoding: UTF-8
+    properties:
+      mail:
+        mime:
+          charset: UTF
+        smtp:
+          writetimeout: 10000
+          connectiontimeout: 10000
+          timeout: 10000
+          auth: true
+          starttls:
+            enable: true
+            required: true
+    verify:
+      host: http://localhost:8222
+
+
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://eureka:password@host.docker.internal:8761/eureka
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+
+
+server:
+  port: 0
+
