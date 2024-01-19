@@ -77,7 +77,7 @@ services:
       - zipkin
 
   api-gateway:
-    image: api-gateway:latest
+    image: jabodav/api-gateway:latest
     container_name: api-gateway
     ports:
       - "8222:8222"
@@ -92,7 +92,7 @@ services:
     command: --spring.profiles.active=docker
 
   user-service:
-    image: user-service:latest
+    image: jabodav/user-service:latest
     container_name: user-service
     environment:
       - SPRING_PROFILES_ACTIVE=docker
@@ -103,7 +103,7 @@ services:
     command: --spring.profiles.active=docker
 
   auth-service:
-    image: auth-service:latest
+    image: jabodav/auth-service:latest
     container_name: auth-service
     environment:
       - SPRING_PROFILES_ACTIVE=docker
@@ -115,7 +115,7 @@ services:
     command: --spring.profiles.active=docker
 
   email-service:
-    image: email-service:latest
+    image: jabodav/email-service:latest
     container_name: email-service
     environment:
       - SPRING_PROFILES_ACTIVE=docker
@@ -125,10 +125,30 @@ services:
       - broker
     command: --spring.profiles.active=docker
 
+  proxy-manager:
+    image: 'jc21/nginx-proxy-manager:latest'
+    restart: unless-stopped
+    ports:
+      - '40080:80'
+      - '40081:81'
+      - '40443:443'
+    networks:
+      vpcbr:
+        ipv4_address: 10.5.0.6
+    volumes:
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
+
 
 
 
 
 networks:
+  vpcbr:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16
+          gateway: 10.5.0.1
   zipkin:
     driver: bridge
