@@ -67,7 +67,7 @@ services:
     command: -p 5433
 
   discovery:
-    image: jabodav/discovery:latest
+    image: discovery:latest
     container_name: discovery
     environment:
       - SPRING_PROFILES_ACTIVE=docker
@@ -77,7 +77,7 @@ services:
       - zipkin
 
   api-gateway:
-    image: jabodav/api-gateway:latest
+    image: api-gateway:latest
     container_name: api-gateway
     ports:
       - "8222:8222"
@@ -85,14 +85,14 @@ services:
       - "8222"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
-      - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY= TRACE
+      - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY=TRACE
     depends_on:
       - zipkin
       - discovery
     command: --spring.profiles.active=docker
 
   user-service:
-    image: jabodav/user-service:latest
+    image: user-service:latest
     container_name: user-service
     environment:
       - SPRING_PROFILES_ACTIVE=docker
@@ -103,7 +103,7 @@ services:
     command: --spring.profiles.active=docker
 
   auth-service:
-    image: jabodav/auth-service:latest
+    image: auth-service:latest
     container_name: auth-service
     environment:
       - SPRING_PROFILES_ACTIVE=docker
@@ -115,7 +115,7 @@ services:
     command: --spring.profiles.active=docker
 
   email-service:
-    image: jabodav/email-service:latest
+    image: email-service:latest
     container_name: email-service
     environment:
       - SPRING_PROFILES_ACTIVE=docker
