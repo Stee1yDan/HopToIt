@@ -115,7 +115,6 @@ public class AuthService implements IAuthService
     @Override
     public void enableUser(String confirmation)
     {
-        System.out.println(confirmation);
         var currentConfirmation = confirmationRepository.findByToken(confirmation).get();
         var user = currentConfirmation.getUser();
 

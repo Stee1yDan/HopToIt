@@ -40,15 +40,11 @@ management:
   zipkin:
     tracing:
       endpoint: http://host.docker.internal:9411/api/v2/spans
-  health:
-    diskspace:
-      enabled: 'true'
-    db:
-      enabled: 'true'
-    defaults:
-      enabled: 'true'
-  security:
-    enabled: 'false'
+  endpoints.web.exposure.include:
+    - '*'
+  endpoint.health.show-details: always
+  health.circuitbreakers.enabled: true
+
 
 endpoints:
   health:
