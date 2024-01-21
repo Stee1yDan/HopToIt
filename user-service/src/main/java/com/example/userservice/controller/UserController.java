@@ -2,16 +2,23 @@ package com.example.userservice.controller;
 
 import com.example.userservice.model.User;
 import com.example.userservice.service.UserService;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
+import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("api/v1/users")
 @RequiredArgsConstructor
+@Slf4j
 public class UserController
 {
     private final UserService userService;
@@ -22,25 +29,46 @@ public class UserController
     }
 
     @GetMapping("/register/{username}")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void registerUser(@PathVariable("username") String username)
+    @CircuitBreaker(name="user-controller", fallbackMethod = "fallbackMethod")
+    @Retry(name="user-controller")
+    public CompletableFuture<ResponseEntity<User>> registerUser(@PathVariable("username") String username)
     {
-        userService.registerUser(username);
+        return CompletableFuture.supplyAsync(() ->
+                new ResponseEntity<>(userService.registerUser(username), HttpStatus.CREATED));
     }
 
     @PutMapping("/update")
-    public ResponseEntity<User> updateUser(@RequestBody User user)
+    @CircuitBreaker(name="user-controller", fallbackMethod = "fallbackUpdateUserMethod")
+    @TimeLimiter(name="user-controller")
+    @Retry(name="user-controller")
+    public CompletableFuture<ResponseEntity<User>> updateUser(@RequestBody User user)
     {
         User currentUser = userService.findUserByUsername(user.getUsername()); // TODO: Check if user exist
         user.setId(currentUser.getId());
-        return new ResponseEntity<>(userService.updateUser(user), HttpStatus.CREATED);
+        return CompletableFuture.supplyAsync(() ->
+            new ResponseEntity<>(userService.updateUser(user), HttpStatus.CREATED));
     }
 
     @DeleteMapping("/delete/{username}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteUser(@PathVariable("username") String username)   //TODO: Block user in auth-service
+    @CircuitBreaker(name="user-controller", fallbackMethod = "fallbackMethod")
+    @TimeLimiter(name="user-controller")
+    @Retry(name="user-controller")
+    public CompletableFuture<ResponseEntity<Object>> deleteUser(@PathVariable("username") String username)   //TODO: Block user in auth-service
     {
-        userService.deleteUser(userService.findUserByUsername(username).getId());//TODO: Verify deletion by email
+        userService.deleteUser(userService.findUserByUsername(username).getId());
+        return CompletableFuture.supplyAsync(() ->
+            new ResponseEntity<>(HttpStatus.NO_CONTENT));//TODO: Verify deletion by email
     }
+
+    public CompletableFuture<ResponseEntity<User>> fallbackMethod(String username, Throwable exception)
+    {
+        return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(null, HttpStatus.CONFLICT));
+    }
+
+    public CompletableFuture<ResponseEntity<User>> fallbackUpdateUserMethod(User user, Throwable exception)
+    {
+        return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(null, HttpStatus.CONFLICT));
+    }
+
 
 }

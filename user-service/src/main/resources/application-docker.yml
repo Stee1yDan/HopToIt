@@ -32,6 +32,44 @@ management:
   zipkin:
     tracing:
       endpoint: http://host.docker.internal:9411/api/v2/spans
+  health:
+    diskspace:
+      enabled: 'true'
+    db:
+      enabled: 'true'
+    defaults:
+      enabled: 'true'
+  security:
+    enabled: 'false'
+
+endpoints:
+  health:
+    enabled:
+      nodeValue: 'true'
+      sensitive: 'false'
+  enabled: 'false'
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      user-controller:
+        automaticTransitionFromOpenToHalfOpenEnabled: 'true'
+        failureRateThreshold: '50'
+        slidingWindowType: COUNT_BASED
+        event-consumer-buffer-size: '10'
+        registerHealthIndicator: 'true'
+        waitDurationInOpenState: 5s
+        permittedNumberOfCallsInHalfOpenState: '3'
+        slidingWindowSize: '5'
+  timelimiter:
+    instances:
+      inventory:
+        timeout-duration: 3s
+  retry:
+    instances:
+      inventory:
+        wait-duration: 5s
+        max-attempts: '3'
 
 server:
   port: 0
