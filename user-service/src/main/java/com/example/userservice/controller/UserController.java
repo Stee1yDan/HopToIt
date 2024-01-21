@@ -29,45 +29,52 @@ public class UserController
     }
 
     @GetMapping("/register/{username}")
-    @CircuitBreaker(name="user-controller", fallbackMethod = "fallbackMethod")
+    @CircuitBreaker(name="user-controller", fallbackMethod = "fallbackRegisterMethod")
     @Retry(name="user-controller")
-    public CompletableFuture<ResponseEntity<User>> registerUser(@PathVariable("username") String username)
+    public CompletableFuture<ResponseEntity<Void>> registerUser(@PathVariable("username") String username)
     {
+        userService.registerUser(username);
         return CompletableFuture.supplyAsync(() ->
-                new ResponseEntity<>(userService.registerUser(username), HttpStatus.CREATED));
+                new ResponseEntity<>(HttpStatus.CREATED));
     }
 
     @PutMapping("/update")
-    @CircuitBreaker(name="user-controller", fallbackMethod = "fallbackUpdateUserMethod")
+    @CircuitBreaker(name="user-controller", fallbackMethod = "fallbackUpdateMethod")
     @TimeLimiter(name="user-controller")
     @Retry(name="user-controller")
     public CompletableFuture<ResponseEntity<User>> updateUser(@RequestBody User user)
     {
-        User currentUser = userService.findUserByUsername(user.getUsername()); // TODO: Check if user exist
+        User currentUser = userService.findUserByUsername(user.getUsername());
         user.setId(currentUser.getId());
         return CompletableFuture.supplyAsync(() ->
             new ResponseEntity<>(userService.updateUser(user), HttpStatus.CREATED));
     }
 
     @DeleteMapping("/delete/{username}")
-    @CircuitBreaker(name="user-controller", fallbackMethod = "fallbackMethod")
+    @CircuitBreaker(name="user-controller", fallbackMethod = "fallbackDeleteMethod")
     @TimeLimiter(name="user-controller")
     @Retry(name="user-controller")
-    public CompletableFuture<ResponseEntity<Object>> deleteUser(@PathVariable("username") String username)   //TODO: Block user in auth-service
+    public CompletableFuture<ResponseEntity<Void>> deleteUser(@PathVariable("username") String username)   //TODO: Block user in auth-service
     {
         userService.deleteUser(userService.findUserByUsername(username).getId());
         return CompletableFuture.supplyAsync(() ->
             new ResponseEntity<>(HttpStatus.NO_CONTENT));//TODO: Verify deletion by email
     }
 
-    public CompletableFuture<ResponseEntity<User>> fallbackMethod(String username, Throwable exception)
+    public CompletableFuture<ResponseEntity<Void>> fallbackRegisterMethod(String username, Throwable throwable)
     {
-        return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(null, HttpStatus.CONFLICT));
+        log.info("WARNING! Couldn't register the user: " + username, throwable); //TODO: Send an email to admin
+        return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(HttpStatus.CONFLICT));
     }
 
-    public CompletableFuture<ResponseEntity<User>> fallbackUpdateUserMethod(User user, Throwable exception)
+    public CompletableFuture<ResponseEntity<User>> fallbackUpdateMethod(User user, Throwable throwable)
     {
-        return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(null, HttpStatus.CONFLICT));
+        return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(user, HttpStatus.CONFLICT));
+    }
+
+    public CompletableFuture<ResponseEntity<Void>> deleteUser(String username, Throwable throwable)
+    {
+        return  CompletableFuture.supplyAsync(() -> new ResponseEntity<>(HttpStatus.CONFLICT));
     }
 
 
