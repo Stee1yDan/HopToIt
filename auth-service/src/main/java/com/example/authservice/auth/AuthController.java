@@ -26,8 +26,11 @@ public class AuthController
     @Retry(name="auth-controller")
     public CompletableFuture<ResponseEntity<Void>> enable(@PathVariable("confirmation") String confirmation)
     {
-        authService.enableUser(confirmation);
-        return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(HttpStatus.OK));
+        return CompletableFuture.supplyAsync(() ->
+        {
+            authService.enableUser(confirmation);
+            return new ResponseEntity<>(HttpStatus.OK);
+        });
     }
 
     @GetMapping("/check/{username}/{role}")
@@ -56,8 +59,11 @@ public class AuthController
     public CompletableFuture<ResponseEntity<Void>> register(
             @RequestBody RegisterRequest request
     ) {
-        authService.register(request);
-        return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(HttpStatus.CREATED));
+        return CompletableFuture.supplyAsync(() ->
+        {
+            authService.register(request);
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        });
     }
     @PostMapping("/authenticate")
     @CircuitBreaker(name="auth-controller", fallbackMethod = "fallbackAuthMethod")
@@ -70,7 +76,7 @@ public class AuthController
 
     public CompletableFuture<ResponseEntity<Void>> fallbackEnableMethod(String token, Throwable throwable)
     {
-        log.info("WARNING! Couldn't enable the user", token); // TODO: Send an email to admin
+        log.info("WARNING! Couldn't enable the user", token); // TODO: Send an email to admin OR delete user
         return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(HttpStatus.CONFLICT));
     }
 

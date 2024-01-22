@@ -33,9 +33,12 @@ public class UserController
     @Retry(name="user-controller")
     public CompletableFuture<ResponseEntity<Void>> registerUser(@PathVariable("username") String username)
     {
-        userService.registerUser(username);
+
         return CompletableFuture.supplyAsync(() ->
-                new ResponseEntity<>(HttpStatus.CREATED));
+        {
+            userService.registerUser(username);
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        });
     }
 
     @PutMapping("/update")
@@ -44,10 +47,12 @@ public class UserController
     @Retry(name="user-controller")
     public CompletableFuture<ResponseEntity<User>> updateUser(@RequestBody User user)
     {
-        User currentUser = userService.findUserByUsername(user.getUsername());
-        user.setId(currentUser.getId());
         return CompletableFuture.supplyAsync(() ->
-            new ResponseEntity<>(userService.updateUser(user), HttpStatus.CREATED));
+        {
+            User currentUser = userService.findUserByUsername(user.getUsername());
+            user.setId(currentUser.getId());
+            return new ResponseEntity<>(userService.updateUser(user), HttpStatus.CREATED);
+        });
     }
 
     @DeleteMapping("/delete/{username}")
@@ -56,15 +61,22 @@ public class UserController
     @Retry(name="user-controller")
     public CompletableFuture<ResponseEntity<Void>> deleteUser(@PathVariable("username") String username)   //TODO: Block user in auth-service
     {
-        userService.deleteUser(userService.findUserByUsername(username).getId());
+
         return CompletableFuture.supplyAsync(() ->
-            new ResponseEntity<>(HttpStatus.NO_CONTENT));//TODO: Verify deletion by email
+        {
+            userService.deleteUser(userService.findUserByUsername(username).getId());
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);//TODO: Verify deletion by email
+        });
     }
 
     public CompletableFuture<ResponseEntity<Void>> fallbackRegisterMethod(String username, Throwable throwable)
     {
-        log.info("WARNING! Couldn't register the user: " + username, throwable); //TODO: Send an email to admin
-        return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(HttpStatus.CONFLICT));
+        //TODO: Send an email to admin
+        return CompletableFuture.supplyAsync(() ->
+        {
+            log.info("WARNING! Couldn't register the user: ", username);
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        });
     }
 
     public CompletableFuture<ResponseEntity<User>> fallbackUpdateMethod(User user, Throwable throwable)
