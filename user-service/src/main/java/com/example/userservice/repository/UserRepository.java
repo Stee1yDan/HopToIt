@@ -10,9 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long>
 {
-    @Lock(LockModeType.PESSIMISTIC_READ)
     User findUserByUsername(String username);
-    @Lock(LockModeType.PESSIMISTIC_READ)
     @Transactional
     User deleteUserByUsername(String username);
 }

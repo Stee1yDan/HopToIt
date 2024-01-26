@@ -53,7 +53,6 @@ public class AuthController
     }
 
     @PostMapping("/register")
-    @ResponseStatus(HttpStatus.CREATED)
     @CircuitBreaker(name="auth-controller", fallbackMethod = "fallbackRegisterMethod")
     @Retry(name="auth-controller")
     public CompletableFuture<ResponseEntity<Void>> register(
@@ -97,6 +96,7 @@ public class AuthController
 
     public CompletableFuture<ResponseEntity<Void>> fallbackAuthMethod(AuthRequest request, Throwable throwable)
     {
+        System.out.println(throwable.toString());
         return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 }

@@ -12,11 +12,9 @@ import java.util.Optional;
 
 public interface TokenRepository extends JpaRepository<Token, Long>
 {
-    @Lock(LockModeType.PESSIMISTIC_READ)
     @Query("SELECT t FROM tokens t JOIN users u ON (t.user.id = u.id) " +
             "WHERE u.id = :userId AND (t.expired = false OR t.revoked = false) ")
     List<Token> findAllValidTokensByUser(String userId);
 
-    @Lock(LockModeType.PESSIMISTIC_READ)
     Optional<Token> findByToken(String token);
 }

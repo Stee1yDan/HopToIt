@@ -12,6 +12,5 @@ import java.util.Optional;
 @Repository
 public interface ConfirmationRepository extends JpaRepository<Confirmation, Long>
 {
-    @Lock(LockModeType.PESSIMISTIC_READ)
     Optional<Confirmation> findByToken(String confirmation);
 }

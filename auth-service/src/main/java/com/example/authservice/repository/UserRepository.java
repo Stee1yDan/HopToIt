@@ -12,6 +12,5 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User,String>
 {
-    @Lock(LockModeType.PESSIMISTIC_READ)
     Optional<User> findUserByUsername(String username);
 }
