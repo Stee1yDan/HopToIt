@@ -1,6 +1,16 @@
 spring:
   application:
     name: gateway
+  cloud:
+    gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:8000"
+            allowedHeaders: "*"
+            allowedMethods:
+              - GET
+              - POST
 
 management:
   tracing:
