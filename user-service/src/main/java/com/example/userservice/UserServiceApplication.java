@@ -1,23 +1,15 @@
 package com.example.userservice;
 
-import com.example.userservice.model.Portfolio;
-import com.example.userservice.model.User;
-import com.example.userservice.service.impl.UserServiceImpl;
+import com.example.userservice.service.impl.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @SpringBootApplication
 @RequiredArgsConstructor
 public class UserServiceApplication {
 
-	private final UserServiceImpl userService;
+	private final UserService userService;
 
 	public static void main(String[] args) {
 		SpringApplication.run(UserServiceApplication.class, args);

@@ -1,7 +1,7 @@
 package com.example.userservice.controller;
 
 import com.example.userservice.model.User;
-import com.example.userservice.service.UserService;
+import com.example.userservice.service.IUserService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
@@ -21,7 +20,7 @@ import java.util.concurrent.CompletableFuture;
 @Slf4j
 public class UserController
 {
-    private final UserService userService;
+    private final IUserService userService;
     @GetMapping("/getAll")
     public ResponseEntity<List<User>> getAll()
     {
@@ -39,6 +38,16 @@ public class UserController
             userService.registerUser(username);
             return new ResponseEntity<>(HttpStatus.CREATED);
         });
+    }
+
+    @GetMapping("/get/{username}")
+    @CircuitBreaker(name="user-controller", fallbackMethod = "fallbackGetMethod")
+    @Retry(name="user-controller")
+    public CompletableFuture<ResponseEntity<User>> getUser(@PathVariable("username") String username)
+    {
+
+        return CompletableFuture.supplyAsync(() ->
+                new ResponseEntity<>(userService.findUserByUsername(username),HttpStatus.CREATED));
     }
 
     @PutMapping("/update")
@@ -82,6 +91,11 @@ public class UserController
     public CompletableFuture<ResponseEntity<User>> fallbackUpdateMethod(User user, Throwable throwable)
     {
         return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(user, HttpStatus.CONFLICT));
+    }
+
+    public CompletableFuture<ResponseEntity<User>> fallbackGetMethod(String username, Throwable throwable)
+    {
+        return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(null, HttpStatus.CONFLICT));
     }
 
     public CompletableFuture<ResponseEntity<Void>> deleteUser(String username, Throwable throwable)

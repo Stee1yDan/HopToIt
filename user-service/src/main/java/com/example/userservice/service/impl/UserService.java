@@ -2,7 +2,7 @@ package com.example.userservice.service.impl;
 
 import com.example.userservice.model.User;
 import com.example.userservice.repository.UserRepository;
-import com.example.userservice.service.UserService;
+import com.example.userservice.service.IUserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,7 +12,7 @@ import java.util.List;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService
+public class UserService implements IUserService
 {
     private final UserRepository userRepository;
 

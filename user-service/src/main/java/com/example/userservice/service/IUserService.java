@@ -4,7 +4,7 @@ import com.example.userservice.model.User;
 
 import java.util.List;
 
-public interface UserService
+public interface IUserService
 {
     User registerUser(String username);
     User updateUser(User user);
