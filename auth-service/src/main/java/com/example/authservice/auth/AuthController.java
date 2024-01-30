@@ -55,12 +55,26 @@ public class AuthController
     @PostMapping("/register")
     @CircuitBreaker(name="auth-controller", fallbackMethod = "fallbackRegisterMethod")
     @Retry(name="auth-controller")
-    public CompletableFuture<ResponseEntity<String>> register(
+    public CompletableFuture<ResponseEntity<RegisterResponse>> register(
             @RequestBody RegisterRequest request
     ) {
+        System.out.println("ASDDDDDDDDDDDDS");
         return CompletableFuture.supplyAsync(() ->
         {
-            new ResponseEntity<>(authService.register(request), HttpStatus.CREATED);
+            System.out.println(authService.isUsernameNotUnique(request.getUsername()));
+            System.out.println((authService.isEmailNotUnique(request.getEmail())));
+            if (authService.isUsernameNotUnique(request.getUsername()))
+                return new ResponseEntity<>(new RegisterResponse("Username is already taken."),
+                        HttpStatus.BAD_REQUEST);
+
+            if (authService.isEmailNotUnique(request.getEmail()))
+                return new ResponseEntity<>(new RegisterResponse("Email is already in use."),
+                        HttpStatus.BAD_REQUEST);
+
+            authService.register(request);
+
+            return new ResponseEntity<>(new RegisterResponse("Confirmation letter was sent to your email."),
+                    HttpStatus.CREATED);
         });
     }
     @PostMapping("/authenticate")
@@ -74,7 +88,7 @@ public class AuthController
 
     public CompletableFuture<ResponseEntity<Void>> fallbackEnableMethod(String token, Throwable throwable)
     {
-        log.info("WARNING! Couldn't enable the user", token); // TODO: Send an email to admin AND delete user
+        log.info("WARNING! Couldn't enable the user", throwable); // TODO: Send an email to admin AND delete user
         return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(HttpStatus.CONFLICT));
     }
 
@@ -88,14 +102,14 @@ public class AuthController
         return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(false, HttpStatus.CONFLICT));
     }
 
-    public CompletableFuture<ResponseEntity<String>> fallbackRegisterMethod(RegisterRequest request, Throwable throwable)
+    public CompletableFuture<ResponseEntity<RegisterResponse>> fallbackRegisterMethod(RegisterRequest request, Throwable throwable)
     {
-        return CompletableFuture.supplyAsync(() -> new ResponseEntity<>("Something went wrong. Try again.", HttpStatus.BAD_REQUEST));
+        return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(new RegisterResponse("Something went wrong. Try again."),
+                HttpStatus.BAD_REQUEST));
     }
 
     public CompletableFuture<ResponseEntity<Void>> fallbackAuthMethod(AuthRequest request, Throwable throwable)
     {
-        System.out.println(throwable.toString());
         return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 }
