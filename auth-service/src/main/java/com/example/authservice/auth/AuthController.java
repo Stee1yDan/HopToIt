@@ -55,13 +55,12 @@ public class AuthController
     @PostMapping("/register")
     @CircuitBreaker(name="auth-controller", fallbackMethod = "fallbackRegisterMethod")
     @Retry(name="auth-controller")
-    public CompletableFuture<ResponseEntity<Void>> register(
+    public CompletableFuture<ResponseEntity<String>> register(
             @RequestBody RegisterRequest request
     ) {
         return CompletableFuture.supplyAsync(() ->
         {
-            authService.register(request);
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            new ResponseEntity<>(authService.register(request), HttpStatus.CREATED);
         });
     }
     @PostMapping("/authenticate")
@@ -75,7 +74,7 @@ public class AuthController
 
     public CompletableFuture<ResponseEntity<Void>> fallbackEnableMethod(String token, Throwable throwable)
     {
-        log.info("WARNING! Couldn't enable the user", token); // TODO: Send an email to admin OR delete user
+        log.info("WARNING! Couldn't enable the user", token); // TODO: Send an email to admin AND delete user
         return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(HttpStatus.CONFLICT));
     }
 
@@ -89,9 +88,9 @@ public class AuthController
         return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(false, HttpStatus.CONFLICT));
     }
 
-    public CompletableFuture<ResponseEntity<Void>> fallbackRegisterMethod(RegisterRequest request, Throwable throwable)
+    public CompletableFuture<ResponseEntity<String>> fallbackRegisterMethod(RegisterRequest request, Throwable throwable)
     {
-        return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+        return CompletableFuture.supplyAsync(() -> new ResponseEntity<>("Something went wrong. Try again.", HttpStatus.BAD_REQUEST));
     }
 
     public CompletableFuture<ResponseEntity<Void>> fallbackAuthMethod(AuthRequest request, Throwable throwable)

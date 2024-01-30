@@ -11,6 +11,8 @@ spring:
             allowedMethods:
               - GET
               - POST
+              - PUT
+              - DELETE
 
 management:
   tracing:

@@ -6,7 +6,7 @@ import com.example.authservice.auth.RegisterRequest;
 
 public interface IUserAuthService
 {
-    void register(RegisterRequest request);
+    String register(RegisterRequest request);
     AuthResponse authenticate(AuthRequest request);
 
     boolean doesUserHasRole(String username, String role);

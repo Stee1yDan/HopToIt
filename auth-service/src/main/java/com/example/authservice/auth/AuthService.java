@@ -37,9 +37,9 @@ public class AuthService implements IAuthService
     private final AuthenticationManager authenticationManager;
 
     @Override
-    public void register(RegisterRequest request)
+    public String register(RegisterRequest request)
     {
-        var user = User.builder()
+        User user = User.builder()
                 .username(request.getUsername())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
@@ -50,6 +50,11 @@ public class AuthService implements IAuthService
                 .isEnabled(false)
                 .build();
 
+        if (userRepository.findUserByEmail(user.getEmail()).isPresent())
+            return "Email is already in use";
+        if (userRepository.findUserByUsername(user.getUsername()).isPresent())
+            return "Username is already taken. Choose another one";
+
         userRepository.save(user);
         var confirmation = new Confirmation(user);
 
@@ -58,6 +63,8 @@ public class AuthService implements IAuthService
                 .token(confirmation.getToken()).build());
 
         confirmationRepository.save(confirmation);
+
+        return "Confirmation letter was sent to your email. Follow the instructions in the letter to activate your account";
     }
 
     @Override
