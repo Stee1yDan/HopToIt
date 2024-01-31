@@ -27,6 +27,6 @@ public class User
     @Column(unique = true,nullable = false,updatable = false)
     private String username;
     private String description;
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Portfolio> portfolios;
 }

@@ -1,5 +1,6 @@
 package com.example.userservice.service.impl;
 
+import com.example.userservice.dto.UserDto;
 import com.example.userservice.model.User;
 import com.example.userservice.repository.UserRepository;
 import com.example.userservice.service.IUserService;
@@ -23,9 +24,11 @@ public class UserService implements IUserService
     }
 
     @Override
-    public User updateUser(User user)
+    public User updateUser(UserDto user)
     {
-        return userRepository.save(user);
+        User currentUser = userRepository.findUserByUsername(user.getUsername());
+        currentUser.setDescription((user.getDescription()));
+        return userRepository.save(currentUser);
     }
     @Override
     public User findUserByUsername(String username)

@@ -59,13 +59,12 @@ public class UserController
     @CircuitBreaker(name="user-controller", fallbackMethod = "fallbackUpdateMethod")
     @TimeLimiter(name="user-controller")
     @Retry(name="user-controller")
-    public CompletableFuture<ResponseEntity<User>> updateUser(@RequestBody User user)
+    public CompletableFuture<ResponseEntity<Void>> updateUser(@RequestBody UserDto user)
     {
         return CompletableFuture.supplyAsync(() ->
         {
-            User currentUser = userService.findUserByUsername(user.getUsername());
-            user.setId(currentUser.getId());
-            return new ResponseEntity<>(userService.updateUser(user), HttpStatus.CREATED);
+            new ResponseEntity<>(DtoConverter.convertUser(userService.updateUser(user)), HttpStatus.OK);
+            return null;
         });
     }
 
@@ -93,9 +92,10 @@ public class UserController
         });
     }
 
-    public CompletableFuture<ResponseEntity<User>> fallbackUpdateMethod(User user, Throwable throwable)
+    public CompletableFuture<ResponseEntity<Void>> fallbackUpdateMethod(UserDto user, Throwable throwable)
     {
-        return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(user, HttpStatus.CONFLICT));
+        System.out.println(throwable.toString());
+        return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(null, HttpStatus.CONFLICT));
     }
 
     public CompletableFuture<ResponseEntity<User>> fallbackGetMethod(String username, Throwable throwable)
