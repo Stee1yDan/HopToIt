@@ -58,7 +58,6 @@ public class AuthController
     public CompletableFuture<ResponseEntity<RegisterResponse>> register(
             @RequestBody RegisterRequest request
     ) {
-        System.out.println("ASDDDDDDDDDDDDS");
         return CompletableFuture.supplyAsync(() ->
         {
             System.out.println(authService.isUsernameNotUnique(request.getUsername()));
@@ -105,11 +104,11 @@ public class AuthController
     public CompletableFuture<ResponseEntity<RegisterResponse>> fallbackRegisterMethod(RegisterRequest request, Throwable throwable)
     {
         return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(new RegisterResponse("Something went wrong. Try again."),
-                HttpStatus.BAD_REQUEST));
+                HttpStatus.UNAUTHORIZED));
     }
 
     public CompletableFuture<ResponseEntity<Void>> fallbackAuthMethod(AuthRequest request, Throwable throwable)
     {
-        return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+        return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(HttpStatus.UNAUTHORIZED));
     }
 }
