@@ -26,8 +26,11 @@ public class AuthController
     @Retry(name="auth-controller")
     public CompletableFuture<ResponseEntity<Void>> enable(@PathVariable("confirmation") String confirmation)
     {
-        authService.enableUser(confirmation);
-        return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(HttpStatus.OK));
+        return CompletableFuture.supplyAsync(() ->
+        {
+            authService.enableUser(confirmation);
+            return new ResponseEntity<>(HttpStatus.OK);
+        });
     }
 
     @GetMapping("/check/{username}/{role}")
@@ -50,14 +53,28 @@ public class AuthController
     }
 
     @PostMapping("/register")
-    @ResponseStatus(HttpStatus.CREATED)
     @CircuitBreaker(name="auth-controller", fallbackMethod = "fallbackRegisterMethod")
     @Retry(name="auth-controller")
-    public CompletableFuture<ResponseEntity<Void>> register(
+    public CompletableFuture<ResponseEntity<RegisterResponse>> register(
             @RequestBody RegisterRequest request
     ) {
-        authService.register(request);
-        return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(HttpStatus.CREATED));
+        return CompletableFuture.supplyAsync(() ->
+        {
+            System.out.println(authService.isUsernameNotUnique(request.getUsername()));
+            System.out.println((authService.isEmailNotUnique(request.getEmail())));
+            if (authService.isUsernameNotUnique(request.getUsername()))
+                return new ResponseEntity<>(new RegisterResponse("Username is already taken."),
+                        HttpStatus.BAD_REQUEST);
+
+            if (authService.isEmailNotUnique(request.getEmail()))
+                return new ResponseEntity<>(new RegisterResponse("Email is already in use."),
+                        HttpStatus.BAD_REQUEST);
+
+            authService.register(request);
+
+            return new ResponseEntity<>(new RegisterResponse("Confirmation letter was sent to your email."),
+                    HttpStatus.CREATED);
+        });
     }
     @PostMapping("/authenticate")
     @CircuitBreaker(name="auth-controller", fallbackMethod = "fallbackAuthMethod")
@@ -70,7 +87,7 @@ public class AuthController
 
     public CompletableFuture<ResponseEntity<Void>> fallbackEnableMethod(String token, Throwable throwable)
     {
-        log.info("WARNING! Couldn't enable the user", token); // TODO: Send an email to admin
+        log.info("WARNING! Couldn't enable the user", throwable); // TODO: Send an email to admin AND delete user
         return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(HttpStatus.CONFLICT));
     }
 
@@ -84,13 +101,14 @@ public class AuthController
         return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(false, HttpStatus.CONFLICT));
     }
 
-    public CompletableFuture<ResponseEntity<Void>> fallbackRegisterMethod(RegisterRequest request, Throwable throwable)
+    public CompletableFuture<ResponseEntity<RegisterResponse>> fallbackRegisterMethod(RegisterRequest request, Throwable throwable)
     {
-        return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+        return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(new RegisterResponse("Something went wrong. Try again."),
+                HttpStatus.UNAUTHORIZED));
     }
 
     public CompletableFuture<ResponseEntity<Void>> fallbackAuthMethod(AuthRequest request, Throwable throwable)
     {
-        return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+        return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(HttpStatus.UNAUTHORIZED));
     }
 }

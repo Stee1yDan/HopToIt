@@ -39,7 +39,7 @@ public class AuthService implements IAuthService
     @Override
     public void register(RegisterRequest request)
     {
-        var user = User.builder()
+        User user = User.builder()
                 .username(request.getUsername())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
@@ -50,6 +50,7 @@ public class AuthService implements IAuthService
                 .isEnabled(false)
                 .build();
 
+
         userRepository.save(user);
         var confirmation = new Confirmation(user);
 
@@ -59,6 +60,16 @@ public class AuthService implements IAuthService
 
         confirmationRepository.save(confirmation);
     }
+
+    public boolean isEmailNotUnique(String email)
+    {
+        return userRepository.findUserByEmail(email).isPresent();
+    }
+    public boolean isUsernameNotUnique(String username)
+    {
+        return userRepository.findUserByUsername(username).isPresent();
+    }
+
 
     @Override
     public AuthResponse authenticate(AuthRequest request)
@@ -115,7 +126,6 @@ public class AuthService implements IAuthService
     @Override
     public void enableUser(String confirmation)
     {
-        System.out.println(confirmation);
         var currentConfirmation = confirmationRepository.findByToken(confirmation).get();
         var user = currentConfirmation.getUser();
 
