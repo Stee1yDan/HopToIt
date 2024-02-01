@@ -41,7 +41,7 @@ public class AuthFilter implements GatewayFilter
                 .bodyToMono(Boolean.class)
                 .flatMap(response -> {
                     if(Boolean.FALSE.equals(response))
-                        return Mono.error(new RuntimeException("un authorized access to application"));
+                        return Mono.error(new RuntimeException("unauthorized access to application"));
                     return chain.filter(exchange);
                 });
     }

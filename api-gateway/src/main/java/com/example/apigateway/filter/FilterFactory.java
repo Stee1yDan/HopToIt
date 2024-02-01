@@ -24,4 +24,9 @@ public class FilterFactory
     {
         return new AuthFilter();
     }
+
+    public AuthUserFilter getAuthUserFilter()
+    {
+        return new AuthUserFilter();
+    }
 }

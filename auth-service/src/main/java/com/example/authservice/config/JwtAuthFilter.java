@@ -44,7 +44,7 @@ public class JwtAuthFilter extends OncePerRequestFilter
 
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null)
         {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail); //TODO: Why do we need to load user details when we only use username to validate tokems
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail); //TODO: Why do we need to load user details when we only use username to validate tokens
 
             if (jwtService.isTokenValidByUser(jwtToken,userDetails))
             {

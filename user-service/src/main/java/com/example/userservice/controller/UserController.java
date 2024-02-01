@@ -48,11 +48,13 @@ public class UserController
     @GetMapping("/get/{username}")
     @CircuitBreaker(name="default", fallbackMethod = "fallbackGetMethod")
     @Retry(name="default")
-    public CompletableFuture<ResponseEntity<User>> getUser(@PathVariable("username") String username)
+    public CompletableFuture<ResponseEntity<UserDto>> getUser(@PathVariable("username") String username)
     {
+        User user = userService.findUserByUsername(username);
+        return CompletableFuture.supplyAsync(() ->{
+            return new ResponseEntity<>(DtoConverter.convertUser(user),HttpStatus.CREATED);
+        });
 
-        return CompletableFuture.supplyAsync(() ->
-                new ResponseEntity<>(userService.findUserByUsername(username),HttpStatus.CREATED));
     }
 
     @PutMapping("/update")
@@ -98,7 +100,7 @@ public class UserController
         return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(null, HttpStatus.CONFLICT));
     }
 
-    public CompletableFuture<ResponseEntity<User>> fallbackGetMethod(String username, Throwable throwable)
+    public CompletableFuture<ResponseEntity<UserDto>> fallbackGetMethod(String username, Throwable throwable)
     {
         return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(null, HttpStatus.CONFLICT));
     }

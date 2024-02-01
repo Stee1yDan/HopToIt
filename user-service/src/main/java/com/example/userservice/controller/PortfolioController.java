@@ -20,7 +20,7 @@ public class PortfolioController
 {
     private final IPortfolioService portfolioService;
 
-    @PutMapping("/update/{username}/{name}")
+    @PutMapping("/update/{name}/{username}")
     @GetMapping("/get/{username}")
     @CircuitBreaker(name="default", fallbackMethod = "fallbackUpdateMethod")
     @Retry(name="default")
@@ -46,7 +46,7 @@ public class PortfolioController
 
     }
 
-    @DeleteMapping("/delete/{username}/{name}")
+    @DeleteMapping("/delete/{name}/{username}")
     @GetMapping("/get/{username}")
     @CircuitBreaker(name="default", fallbackMethod = "fallbackDeleteMethod")
     @Retry(name="default")

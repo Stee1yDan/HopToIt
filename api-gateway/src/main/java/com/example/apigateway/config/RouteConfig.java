@@ -23,7 +23,9 @@ public class RouteConfig
         return builder.routes()
                 .route(p -> p
                         .path("/api/v1/users/**")
-                        .filters(f -> f.filter(filterFactory.getAuthFilter())) //TODO: GatewayFilterFactory
+                        .filters(f -> f
+                                .filter(filterFactory.getAuthFilter())
+                                .filter(filterFactory.getAuthUserFilter())) //TODO: GatewayFilterFactory
                         .uri("lb://user-service"))
                 .route(p -> p
                         .path("/api/v1/auth/**")

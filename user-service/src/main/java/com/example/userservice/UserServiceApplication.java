@@ -36,7 +36,7 @@ public class UserServiceApplication {
 			userService.saveUser(
 					User.builder()
 							.id(1L)
-							.username("Bobson1")
+							.username("admin")
 							.description("Hello world")
 							.portfolios(List.of(portfolio))
 							.build()

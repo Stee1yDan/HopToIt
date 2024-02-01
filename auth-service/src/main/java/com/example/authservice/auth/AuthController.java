@@ -60,8 +60,6 @@ public class AuthController
     ) {
         return CompletableFuture.supplyAsync(() ->
         {
-            System.out.println(authService.isUsernameNotUnique(request.getUsername()));
-            System.out.println((authService.isEmailNotUnique(request.getEmail())));
             if (authService.isUsernameNotUnique(request.getUsername()))
                 return new ResponseEntity<>(new RegisterResponse("Username is already taken."),
                         HttpStatus.BAD_REQUEST);
@@ -85,18 +83,19 @@ public class AuthController
         return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(authService.authenticate(request), HttpStatus.OK));
     }
 
-    public CompletableFuture<ResponseEntity<Void>> fallbackEnableMethod(String token, Throwable throwable)
+    @GetMapping("/validate/{token}/{username}")
+    public ResponseEntity<Boolean> isUsernameValid(@PathVariable("token") String token,
+                                                                      @PathVariable("username") String username)
     {
-        log.info("WARNING! Couldn't enable the user", throwable); // TODO: Send an email to admin AND delete user
-        return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(HttpStatus.CONFLICT));
+        return ResponseEntity.ok(jwtService.isUserValid(token, username));
     }
 
-    public CompletableFuture<ResponseEntity<Boolean>> fallbackRoleMethod(String token, Throwable throwable)
+    public CompletableFuture<ResponseEntity<Boolean>> fallbackTokenMethod(String token, Throwable throwable)
     {
         return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(false, HttpStatus.CONFLICT));
     }
 
-    public CompletableFuture<ResponseEntity<Boolean>> fallbackTokenMethod(String username, String role, Throwable throwable)
+    public CompletableFuture<ResponseEntity<Boolean>> fallbackRoleMethod(String username, String role, Throwable throwable)
     {
         return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(false, HttpStatus.CONFLICT));
     }
