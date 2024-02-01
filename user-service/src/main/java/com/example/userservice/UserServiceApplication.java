@@ -2,7 +2,7 @@ package com.example.userservice;
 
 import com.example.userservice.model.Portfolio;
 import com.example.userservice.model.User;
-import com.example.userservice.service.impl.UserService;
+import com.example.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;

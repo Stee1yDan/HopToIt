@@ -1,9 +1,9 @@
-package com.example.userservice.service.impl;
+package com.example.userservice.service;
 
 import com.example.userservice.dto.UserDto;
 import com.example.userservice.model.User;
 import com.example.userservice.repository.UserRepository;
-import com.example.userservice.service.IUserService;
+import com.example.userservice.interfaces.IUserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -2,7 +2,7 @@ package com.example.userservice.controller;
 
 import com.example.userservice.dto.UserDto;
 import com.example.userservice.model.User;
-import com.example.userservice.service.IUserService;
+import com.example.userservice.interfaces.IUserService;
 import com.example.userservice.util.DtoConverter;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
@@ -31,7 +31,7 @@ public class UserController
                 .map(user -> DtoConverter.convertUser(user))
                 .collect(Collectors.toList()), HttpStatus.OK);
     }
-
+    
     @GetMapping("/register/{username}")
     @CircuitBreaker(name="user-controller", fallbackMethod = "fallbackRegisterMethod")
     @Retry(name="user-controller")
