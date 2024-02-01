@@ -33,8 +33,8 @@ public class UserController
     }
     
     @GetMapping("/register/{username}")
-    @CircuitBreaker(name="user-controller", fallbackMethod = "fallbackRegisterMethod")
-    @Retry(name="user-controller")
+    @CircuitBreaker(name="default", fallbackMethod = "fallbackRegisterMethod")
+    @Retry(name="default")
     public CompletableFuture<ResponseEntity<Void>> registerUser(@PathVariable("username") String username)
     {
 
@@ -46,8 +46,8 @@ public class UserController
     }
 
     @GetMapping("/get/{username}")
-    @CircuitBreaker(name="user-controller", fallbackMethod = "fallbackGetMethod")
-    @Retry(name="user-controller")
+    @CircuitBreaker(name="default", fallbackMethod = "fallbackGetMethod")
+    @Retry(name="default")
     public CompletableFuture<ResponseEntity<User>> getUser(@PathVariable("username") String username)
     {
 
@@ -56,9 +56,9 @@ public class UserController
     }
 
     @PutMapping("/update")
-    @CircuitBreaker(name="user-controller", fallbackMethod = "fallbackUpdateMethod")
-    @TimeLimiter(name="user-controller")
-    @Retry(name="user-controller")
+    @CircuitBreaker(name="default", fallbackMethod = "fallbackUpdateMethod")
+    @TimeLimiter(name="default")
+    @Retry(name="default")
     public CompletableFuture<ResponseEntity<Void>> updateUser(@RequestBody UserDto user)
     {
         return CompletableFuture.supplyAsync(() ->
@@ -69,9 +69,9 @@ public class UserController
     }
 
     @DeleteMapping("/delete/{username}")
-    @CircuitBreaker(name="user-controller", fallbackMethod = "fallbackDeleteMethod")
-    @TimeLimiter(name="user-controller")
-    @Retry(name="user-controller")
+    @CircuitBreaker(name="default", fallbackMethod = "fallbackDeleteMethod")
+    @TimeLimiter(name="default")
+    @Retry(name="default")
     public CompletableFuture<ResponseEntity<Void>> deleteUser(@PathVariable("username") String username)   //TODO: Block user in auth-service
     {
 

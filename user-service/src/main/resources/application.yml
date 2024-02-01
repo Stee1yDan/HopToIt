@@ -38,7 +38,7 @@ endpoints:
 resilience4j:
   circuitbreaker:
     instances:
-      user-controller:
+      default:
         automaticTransitionFromOpenToHalfOpenEnabled: 'true'
         failureRateThreshold: '50'
         slidingWindowType: COUNT_BASED
