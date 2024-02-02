@@ -26,6 +26,6 @@ public class Portfolio {
     @Column(nullable = false)
     private String name;
 
-    @ElementCollection
-    private Map<String, Integer> stock = new HashMap<>(); //TODO: Add Enum to represent stock names
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<Stock> stocks; //TODO: Add Enum to represent stock names
 }

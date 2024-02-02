@@ -1,5 +1,6 @@
 package com.example.userservice.dto;
 
+import com.example.userservice.model.Stock;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,6 +8,7 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -18,5 +20,5 @@ public class PortfolioDto
 {
     private String name;
 
-    private Map<String, Integer> stock = new HashMap<>();
+    private List<StockDto> stocks;
 }

@@ -39,7 +39,7 @@ public class PortfolioService implements IPortfolioService
         User currentUser = userRepository.findUserByUsername(username);
         List<Portfolio> portfolios = currentUser.getPortfolios();
 
-        Portfolio currentPortfolio = new Portfolio(null, portfolio.getName(), portfolio.getStock());
+        Portfolio currentPortfolio = new Portfolio(null, portfolio.getName(), portfolio.getStocks());
 
         if (portfolios.stream()
                 .map(p -> p.getName())

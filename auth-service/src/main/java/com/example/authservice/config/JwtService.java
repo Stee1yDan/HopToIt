@@ -76,7 +76,7 @@ public class JwtService implements ITokenService
 
     public boolean isUserValid(String token, String username)
     {
-        return true;
+        return extractUsername(token).equals(username);
     }
 
     private boolean isTokenNonExpired(String token)

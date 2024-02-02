@@ -52,7 +52,7 @@ public class UserController
     {
         User user = userService.findUserByUsername(username);
         return CompletableFuture.supplyAsync(() ->{
-            return new ResponseEntity<>(DtoConverter.convertUser(user),HttpStatus.CREATED);
+            return new ResponseEntity<>(DtoConverter.convertUser(user),HttpStatus.OK);
         });
 
     }
