@@ -1,3 +1,17 @@
+spring:
+  application:
+    name: {YOUR_APPLICATION_NAME}
+
+eureka:
+  instance:
+    appName: stock-info-service
+    preferIpAddress: true
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://eureka:password@localhost:8761/eureka
+
 management:
   tracing:
     sampling:

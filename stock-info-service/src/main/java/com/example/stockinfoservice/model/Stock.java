@@ -25,6 +25,6 @@ public class Stock
     private Double dividendYield;
     private Double currentPrice;
     private Double dayHigh;
-    private Double dalLow;
+    private Double dayLow;
 
 }
