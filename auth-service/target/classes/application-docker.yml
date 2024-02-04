@@ -1,0 +1,80 @@
+spring:
+  application:
+    name: auth-service
+  datasource:
+    url: jdbc:postgresql://host.docker.internal:5431/auth-service
+    username: postgres
+    password: SpiralStaircase
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  kafka:
+    bootstrapServers: broker:29092
+
+application:
+  security:
+    jwt:
+      secretKey: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+      expiration: 86400000 # a day
+
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://eureka:password@host.docker.internal:8761/eureka
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://host.docker.internal:9411/api/v2/spans
+  endpoints.web.exposure.include:
+    - '*'
+  endpoint.health.show-details: always
+  health.circuitbreakers.enabled: true
+
+
+endpoints:
+  health:
+    enabled:
+      nodeValue: 'true'
+      sensitive: 'false'
+  enabled: 'false'
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      auth-controller:
+        automaticTransitionFromOpenToHalfOpenEnabled: 'true'
+        failureRateThreshold: '50'
+        slidingWindowType: COUNT_BASED
+        event-consumer-buffer-size: '10'
+        registerHealthIndicator: 'true'
+        waitDurationInOpenState: 5s
+        permittedNumberOfCallsInHalfOpenState: '3'
+        slidingWindowSize: '5'
+  timelimiter:
+    instances:
+      inventory:
+        timeout-duration: 3s
+  retry:
+    instances:
+      inventory:
+        wait-duration: 5s
+        max-attempts: '3'
+
+
+server:
+  port: 0

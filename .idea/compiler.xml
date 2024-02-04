@@ -13,6 +13,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="api-gateway" />
         <module name="auth-service" />
+        <module name="stock-info-service" />
         <module name="user-service" />
         <module name="discovery" />
         <module name="email-service" />
@@ -33,6 +34,7 @@
       <module name="discovery" options="-parameters" />
       <module name="discovery-server" options="-parameters" />
       <module name="email-service" options="-parameters" />
+      <module name="stock-info-service" options="-parameters" />
       <module name="user-service" options="-parameters" />
     </option>
   </component>
