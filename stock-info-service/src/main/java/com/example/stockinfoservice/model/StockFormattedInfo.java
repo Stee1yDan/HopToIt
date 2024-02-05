@@ -11,7 +11,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Stock
+public class StockFormattedInfo
 {
     private String symbol;
     private String longName;

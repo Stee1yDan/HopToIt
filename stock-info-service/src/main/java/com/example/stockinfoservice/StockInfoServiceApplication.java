@@ -1,5 +1,8 @@
 package com.example.stockinfoservice;
 
+import com.example.stockinfoservice.client.StockClient;
+import com.example.stockinfoservice.model.StockHistoricalInfoRequest;
+import com.example.stockinfoservice.model.StockHistoricalInfoResponse;
 import com.example.stockinfoservice.service.StockService;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
@@ -21,6 +24,7 @@ import java.io.IOException;
 public class StockInfoServiceApplication
 {
     private final StockService stockService;
+    private final StockClient stockClient;
 
     public static void main(String[] args) throws IOException
     {
@@ -40,11 +44,12 @@ public class StockInfoServiceApplication
     }
 
     @Bean
-    CommandLineRunner runner() //TODO: Revoke existing tokens on the launch
+    CommandLineRunner runner()
     {
         return args ->
         {
             stockService.initAllStocks();
+            stockService.initAllStocksHistoricalData();
         };
     }
 

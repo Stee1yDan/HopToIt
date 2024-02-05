@@ -1,6 +1,6 @@
 package com.example.stockinfoservice.controller;
 
-import com.example.stockinfoservice.model.Stock;
+import com.example.stockinfoservice.model.StockFormattedInfo;
 import com.example.stockinfoservice.service.StockService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -14,22 +14,24 @@ public class StockController
 {
     private final StockService stockService;
 
-    @PostMapping("/create")
-    public String create(@RequestBody Stock stock) throws ExecutionException, InterruptedException
+    @PostMapping("/{collectionName}/create")
+    public String create(@PathVariable("collectionName") String collectionName, @RequestBody StockFormattedInfo stockFullInfo) throws ExecutionException, InterruptedException
     {
-        return stockService.createStock(stock);
+        return stockService.createStock(stockFullInfo, collectionName);
     }
 
-    @GetMapping("/get/{documentId}")
-    public Stock get(@PathVariable(name = "documentId") String documentId) throws ExecutionException, InterruptedException
+    @GetMapping("/get/{collectionName}/{documentId}")
+    public StockFormattedInfo get(@PathVariable("collectionName") String collectionName,
+                                  @PathVariable(name = "documentId") String documentId) throws ExecutionException, InterruptedException
     {
-        return stockService.getStock(documentId);
+        return stockService.getStock(collectionName, documentId);
     }
 
-    @DeleteMapping("/delete/{documentId}")
-    public void delete(@PathVariable(name = "documentId") String documentId)
+    @DeleteMapping("/delete/{collectionName}/{documentId}")
+    public void delete(@PathVariable("collectionName") String collectionName,
+                       @PathVariable(name = "documentId") String documentId)
     {
-        stockService.deleteStock(documentId);
+        stockService.deleteStock(collectionName, documentId);
     }
 }
 
