@@ -33,16 +33,25 @@ public class FirebaseService
         }
     }
 
-    public StockFormattedInfo getStock(String collectionName, String documentId) throws ExecutionException, InterruptedException
+    public StockFormattedInfo getStock(String collectionName, String documentId)
     {
-        Firestore firestore = FirestoreClient.getFirestore();
-        DocumentReference documentReference = firestore.collection(collectionName).document(documentId);
-        ApiFuture<DocumentSnapshot> future = documentReference.get();
-        DocumentSnapshot documentSnapshot = future.get();
+        try{
+            Firestore firestore = FirestoreClient.getFirestore();
+            DocumentReference documentReference = firestore.collection(collectionName).document(documentId);
+            ApiFuture<DocumentSnapshot> future = documentReference.get();
+            DocumentSnapshot documentSnapshot = future.get();
+            if (documentSnapshot != null)
+                return documentSnapshot.toObject(StockFormattedInfo.class);
+            return null;
+        }
+        catch (Exception e)
+        {
+            System.out.println(e);
+            return null;
+        }
 
-        if (documentSnapshot != null)
-            return documentSnapshot.toObject(StockFormattedInfo.class);
-        return null;
+
+
     }
 
     public void deleteStock(String collectionName, String documentId)

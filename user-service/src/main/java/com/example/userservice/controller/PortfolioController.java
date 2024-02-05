@@ -21,7 +21,6 @@ public class PortfolioController
     private final IPortfolioService portfolioService;
 
     @PutMapping("/update/{name}/{username}")
-    @GetMapping("/get/{username}")
     @CircuitBreaker(name="default", fallbackMethod = "fallbackUpdateMethod")
     @Retry(name="default")
     public CompletableFuture<ResponseEntity<Void>> updatePortfolio(@RequestBody Portfolio portfolio,
@@ -35,7 +34,6 @@ public class PortfolioController
 
 
     @PostMapping("/add/{username}")
-    @GetMapping("/get/{username}")
     @CircuitBreaker(name="default", fallbackMethod = "fallbackAddMethod")
     @Retry(name="default")
     public CompletableFuture<ResponseEntity<Void>> addPortfolio(@RequestBody Portfolio portfolio, @PathVariable("username") String username)
@@ -47,7 +45,6 @@ public class PortfolioController
     }
 
     @DeleteMapping("/delete/{name}/{username}")
-    @GetMapping("/get/{username}")
     @CircuitBreaker(name="default", fallbackMethod = "fallbackDeleteMethod")
     @Retry(name="default")
     public CompletableFuture<ResponseEntity<Void>> deletePortfolio(@PathVariable("username") String username, @PathVariable("name") String name)

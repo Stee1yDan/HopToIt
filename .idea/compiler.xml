@@ -12,8 +12,8 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="api-gateway" />
-        <module name="stockFullInfo-info-service" />
         <module name="auth-service" />
+        <module name="stock-info-service" />
         <module name="user-service" />
         <module name="discovery" />
         <module name="email-service" />
@@ -24,7 +24,7 @@
       <module name="discovery-server" target="17" />
       <module name="Hop2It" target="19" />
       <module name="microservices-new" target="17" />
-      <module name="stock-info-service" target="17" />
+      <module name="stockFullInfo-info-service" target="17" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">

@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
-    <artifactId>stockFullInfo-info-service</artifactId>
+    <artifactId>stock-info-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>stockFullInfo-info-service</name>
-    <description>stockFullInfo-info-service</description>
+    <name>stock-info-service</name>
+    <description>stock-info-service</description>
     <properties>
         <java.version>17</java.version>
         <spring-cloud.version>2023.0.0</spring-cloud.version>
@@ -69,6 +69,13 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
             <version>4.0.4</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/io.github.resilience4j/resilience4j-spring-boot3 -->
+        <dependency>
+            <groupId>io.github.resilience4j</groupId>
+            <artifactId>resilience4j-spring-boot3</artifactId>
+            <version>2.2.0</version>
         </dependency>
 
     </dependencies>

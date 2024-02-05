@@ -86,7 +86,6 @@ public class StockService
     }
 
     public StockFormattedInfo getStock(String stockCollectionName, String documentId)
-            throws ExecutionException, InterruptedException
     {
         return firebaseService.getStock(stockCollectionName, documentId);
     }
