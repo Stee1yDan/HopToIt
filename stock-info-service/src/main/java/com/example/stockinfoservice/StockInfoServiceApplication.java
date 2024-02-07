@@ -49,7 +49,7 @@ public class StockInfoServiceApplication
         return args ->
         {
             stockService.initAllStocks();
-            stockService.initAllStocksHistoricalData();
+//            stockService.initAllStocksWithHistoricalData();
         };
     }
 

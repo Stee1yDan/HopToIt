@@ -21,6 +21,7 @@
         <module>user-service</module>
         <module>discovery</module>
         <module>api-gateway</module>
+        <module>stock-info-service</module>
     </modules>
 
     <properties>

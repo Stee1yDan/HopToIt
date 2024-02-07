@@ -1,27 +1,17 @@
 package com.example.stockinfoservice.service;
 
 import com.example.stockinfoservice.client.StockClient;
-import com.example.stockinfoservice.model.StockHistoricalInfoRequest;
-import com.example.stockinfoservice.model.StockHistoricalInfoResponse;
-import com.example.stockinfoservice.model.StockFormattedInfo;
-import com.example.stockinfoservice.model.StockSymbols;
-import com.google.cloud.firestore.Firestore;
-import com.google.firebase.cloud.FirestoreClient;
+import com.example.stockinfoservice.model.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
 
 @Service
 @EnableScheduling
@@ -37,13 +27,15 @@ public class StockService
     @Scheduled(fixedRate = 3600000)
     public void initAllStocks()
     {
-        List<String> symbols = Arrays.stream(StockSymbols.values()).map(stockSymbols -> stockSymbols.toString()).collect(Collectors.toList());
+        List<String> symbols = Arrays.stream(StockSymbols.values()).map(stockSymbols -> stockSymbols.toString()).toList();
 
         symbols.forEach(s ->
         {
             try
             {
-                createStock(stockClient.getFormattedStockInfo(s), stockCollection);
+                StockFormattedInfo stockFormattedInfo = stockClient.getFormattedStockInfo(s);
+                firebaseService.createDocument(stockFormattedInfo.getSymbol(), stockFormattedInfo, stockCollection);
+                Thread.sleep(1000);
             }
             catch (Exception e)
             {
@@ -54,9 +46,9 @@ public class StockService
 
     @Async
     @Scheduled(fixedRate = 3600000)
-    public void initAllStocksHistoricalData()
+    public void initAllStocksWithHistoricalData()
     {
-        List<String> symbols = Arrays.stream(StockSymbols.values()).map(stockSymbols -> stockSymbols.toString()).collect(Collectors.toList());
+        List<String> symbols = Arrays.stream(StockSymbols.values()).map(Enum::toString).toList();
 
         symbols.forEach(s ->
         {
@@ -65,13 +57,22 @@ public class StockService
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 LocalDate date = LocalDate.now();
 
-                var request = StockHistoricalInfoRequest.builder()
-                        .start(date.minusDays(7).format(formatter).toString())
-                        .end(date.format(formatter).toString())
+                StockHistoricalInfoRequest request = StockHistoricalInfoRequest.builder()
+                        .start(date.minusDays(7).format(formatter))
+                        .end(date.format(formatter))
                         .interval("1h")
                         .build();
 
-               stockClient.getHistoricalStockInfo(s, request).forEach(d -> firebaseService.createDocument(d.getSymbol(), d, stockHistoricalData));
+
+                List<StockHistoricalInfoResponse> stockHistoricalInfoResponse =
+                        stockClient.getHistoricalStockInfo(s, request);
+
+                firebaseService.createDocument(s,
+                        StockTimestamps.builder()
+                                .symbol(s)
+                                .stockTimestamps(stockHistoricalInfoResponse).build(), stockHistoricalData);
+
+               Thread.sleep(10000);
             }
             catch (Exception e)
             {

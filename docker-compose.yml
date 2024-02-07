@@ -125,19 +125,19 @@ services:
       - broker
     command: --spring.profiles.active=docker
 
-  proxy-manager:
-    image: 'jc21/nginx-proxy-manager:latest'
-    restart: unless-stopped
-    ports:
-      - '40080:80'
-      - '40081:81'
-      - '40443:443'
-    networks:
-      vpcbr:
-        ipv4_address: 10.5.0.6
-    volumes:
-      - ./data:/data
-      - ./letsencrypt:/etc/letsencrypt
+#  proxy-manager:
+#    image: 'jc21/nginx-proxy-manager:latest'
+#    restart: unless-stopped
+#    ports:
+#      - '40080:80'
+#      - '40081:81'
+#      - '40443:443'
+#    networks:
+#      vpcbr:
+#        ipv4_address: 10.5.0.6
+#    volumes:
+#      - ./data:/data
+#      - ./letsencrypt:/etc/letsencrypt
 
 
 

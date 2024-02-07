@@ -15,7 +15,6 @@ public class StockFormattedInfo
 {
     private String symbol;
     private String longName;
-
     private String sector;
     private String website;
     private String longBusinessSummary;
@@ -26,5 +25,4 @@ public class StockFormattedInfo
     private Double currentPrice;
     private Double dayHigh;
     private Double dayLow;
-
 }
