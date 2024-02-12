@@ -25,4 +25,7 @@ public class StockFormattedInfo
     private Double currentPrice;
     private Double dayHigh;
     private Double dayLow;
+    private Double hourlyChange;
+    private Double dailyChange;
+    private Double monthlyChange;
 }

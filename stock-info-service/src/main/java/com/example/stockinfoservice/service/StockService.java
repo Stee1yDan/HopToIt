@@ -20,11 +20,11 @@ public class StockService
 {
     private String stockCollection = "stock";
     private String stockHistoricalData = "stock_historical_data";
+    private String stockDailyHistoricalData = "stock_daily_historical_data";
     private final StockClient stockClient;
     private final FirebaseService firebaseService;
 
-    @Async
-    @Scheduled(fixedRate = 3600000)
+
     public void initAllStocks()
     {
         List<String> symbols = Arrays.stream(StockSymbols.values()).map(stockSymbols -> stockSymbols.toString()).toList();
@@ -35,7 +35,6 @@ public class StockService
             {
                 StockFormattedInfo stockFormattedInfo = stockClient.getFormattedStockInfo(s);
                 firebaseService.createDocument(stockFormattedInfo.getSymbol(), stockFormattedInfo, stockCollection);
-                Thread.sleep(1000);
             }
             catch (Exception e)
             {
@@ -58,9 +57,63 @@ public class StockService
                 LocalDate date = LocalDate.now();
 
                 StockHistoricalInfoRequest request = StockHistoricalInfoRequest.builder()
-                        .start(date.minusDays(7).format(formatter))
+                        .start(date.minusDays(60).format(formatter))
                         .end(date.format(formatter))
                         .interval("1h")
+                        .build();
+
+
+                List<StockHistoricalInfoResponse> stockHistoricalInfoResponse =
+                        stockClient.getHistoricalStockInfo(s, request);
+
+
+                StockFormattedInfo stockFormattedInfo = stockClient.getFormattedStockInfo(s);
+
+                int size = stockHistoricalInfoResponse.size();
+                Double lastHourChange = (stockHistoricalInfoResponse.get(size-1).getClose() -
+                        stockHistoricalInfoResponse.get(size-1).getOpen()) / stockHistoricalInfoResponse.get(size-1).getClose();
+
+                Double lastDayChange = (stockHistoricalInfoResponse.get(size-1).getClose() -
+                        stockHistoricalInfoResponse.get(size-25).getOpen()) / stockHistoricalInfoResponse.get(size-1).getClose();
+
+                Double lastMonthChange = (stockHistoricalInfoResponse.get(size-1).getClose() -
+                        stockHistoricalInfoResponse.get(size-211).getOpen()) / stockHistoricalInfoResponse.get(size-1).getClose();
+
+
+                stockFormattedInfo.setHourlyChange(lastHourChange);
+                stockFormattedInfo.setDailyChange(lastDayChange);
+                stockFormattedInfo.setMonthlyChange(lastMonthChange);
+                firebaseService.createDocument(stockFormattedInfo.getSymbol(), stockFormattedInfo, stockCollection);
+
+                firebaseService.createDocument(s,
+                        StockTimestamps.builder()
+                                .symbol(s)
+                                .stockTimestamps(stockHistoricalInfoResponse).build(), stockHistoricalData);
+            }
+            catch (Exception e)
+            {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    @Async
+    @Scheduled(fixedRate = 86400000)
+    public void initAllStocksWithDailyHistoricalData()
+    {
+        List<String> symbols = Arrays.stream(StockSymbols.values()).map(Enum::toString).toList();
+
+        symbols.forEach(s ->
+        {
+            try
+            {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDate date = LocalDate.now();
+
+                StockHistoricalInfoRequest request = StockHistoricalInfoRequest.builder()
+                        .start(date.minusDays(180).format(formatter))
+                        .end(date.format(formatter))
+                        .interval("1d")
                         .build();
 
 
@@ -70,9 +123,8 @@ public class StockService
                 firebaseService.createDocument(s,
                         StockTimestamps.builder()
                                 .symbol(s)
-                                .stockTimestamps(stockHistoricalInfoResponse).build(), stockHistoricalData);
+                                .stockTimestamps(stockHistoricalInfoResponse).build(), stockDailyHistoricalData);
 
-               Thread.sleep(10000);
             }
             catch (Exception e)
             {

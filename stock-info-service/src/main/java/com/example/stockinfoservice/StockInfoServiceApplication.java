@@ -23,9 +23,6 @@ import java.io.IOException;
 @EnableFeignClients
 public class StockInfoServiceApplication
 {
-    private final StockService stockService;
-    private final StockClient stockClient;
-
     public static void main(String[] args) throws IOException
     {
         ClassLoader classLoader = StockInfoServiceApplication.class.getClassLoader();
@@ -43,14 +40,6 @@ public class StockInfoServiceApplication
         SpringApplication.run(StockInfoServiceApplication.class, args);
     }
 
-    @Bean
-    CommandLineRunner runner()
-    {
-        return args ->
-        {
-            stockService.initAllStocks();
-//            stockService.initAllStocksWithHistoricalData();
-        };
-    }
+
 
 }
