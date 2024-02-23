@@ -21,9 +21,28 @@ public class StockService
     private String stockCollection = "stock";
     private String stockHistoricalData = "stock_historical_data";
     private String stockDailyHistoricalData = "stock_daily_historical_data";
+    private String stockRvScore = "stock_rv_score";
+
     private final StockClient stockClient;
     private final FirebaseService firebaseService;
 
+    @Async
+    @Scheduled(fixedRate = 3600000)
+    public void getRvScore()
+    {
+        List<StockRvScore> rvScores = stockClient.getStockRvScore();
+
+        rvScores.forEach(stock ->
+        {
+            try {
+                firebaseService.createDocument(stock.getTicker(), stock, stockRvScore);
+            }
+            catch (Exception e)
+            {
+                System.out.printf(e.toString());
+            }
+        });
+    }
 
     public void initAllStocks()
     {
@@ -38,13 +57,13 @@ public class StockService
             }
             catch (Exception e)
             {
-                throw new RuntimeException(e);
+                System.out.printf(e.toString());
             }
         });
     }
 
-    @Async
-    @Scheduled(fixedRate = 3600000)
+//    @Async
+//    @Scheduled(fixedRate = 3600000)
     public void initAllStocksWithHistoricalData()
     {
         List<String> symbols = Arrays.stream(StockSymbols.values()).map(Enum::toString).toList();
@@ -74,31 +93,37 @@ public class StockService
                         stockHistoricalInfoResponse.get(size-1).getOpen()) / stockHistoricalInfoResponse.get(size-1).getClose();
 
                 Double lastDayChange = (stockHistoricalInfoResponse.get(size-1).getClose() -
-                        stockHistoricalInfoResponse.get(size-25).getOpen()) / stockHistoricalInfoResponse.get(size-1).getClose();
+                        stockHistoricalInfoResponse.get(size-6).getOpen()) / stockHistoricalInfoResponse.get(size-1).getClose();
+
+                Double lastWeekChange = (stockHistoricalInfoResponse.get(size-1).getClose() -
+                        stockHistoricalInfoResponse.get(size-42).getOpen()) / stockHistoricalInfoResponse.get(size-1).getClose();
 
                 Double lastMonthChange = (stockHistoricalInfoResponse.get(size-1).getClose() -
-                        stockHistoricalInfoResponse.get(size-211).getOpen()) / stockHistoricalInfoResponse.get(size-1).getClose();
+                        stockHistoricalInfoResponse.get(size-138).getOpen()) / stockHistoricalInfoResponse.get(size-1).getClose();
 
 
                 stockFormattedInfo.setHourlyChange(lastHourChange);
                 stockFormattedInfo.setDailyChange(lastDayChange);
+                stockFormattedInfo.setWeeklyChange(lastWeekChange);
                 stockFormattedInfo.setMonthlyChange(lastMonthChange);
+
                 firebaseService.createDocument(stockFormattedInfo.getSymbol(), stockFormattedInfo, stockCollection);
 
                 firebaseService.createDocument(s,
                         StockTimestamps.builder()
                                 .symbol(s)
                                 .stockTimestamps(stockHistoricalInfoResponse).build(), stockHistoricalData);
+
             }
             catch (Exception e)
             {
-                throw new RuntimeException(e);
+                System.out.printf(e.toString());
             }
         });
     }
 
-    @Async
-    @Scheduled(fixedRate = 86400000)
+//    @Async
+//    @Scheduled(fixedRate = 86400000)
     public void initAllStocksWithDailyHistoricalData()
     {
         List<String> symbols = Arrays.stream(StockSymbols.values()).map(Enum::toString).toList();

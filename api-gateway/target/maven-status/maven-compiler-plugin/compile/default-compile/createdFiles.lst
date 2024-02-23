@@ -1,0 +1,10 @@
+com\example\apigateway\filter\AuthFilter.class
+com\example\apigateway\ApiGatewayApplication.class
+com\example\apigateway\filter\RoleFilter.class
+com\example\apigateway\filter\AuthUserFilter.class
+com\example\apigateway\config\RouteConfig.class
+com\example\apigateway\config\WebClientConfig.class
+com\example\apigateway\filter\FilterFactory.class
+com\example\apigateway\user\Role.class
+com\example\apigateway\user\Permission.class
+com\example\apigateway\config\JwtService.class
