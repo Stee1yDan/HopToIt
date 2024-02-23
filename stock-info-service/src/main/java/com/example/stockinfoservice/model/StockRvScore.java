@@ -12,17 +12,16 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 public class StockRvScore {
-    public Double evToEbitda;
-    public Double evToEbitdaPercentile;
-    public Double evToGp;
-    public Double evToGpPercentile;
-    public Double pbPercentile;
-    public Double pbRatio;
-    public Double pePercentile;
-    public Double peRatio;
-    public Double price;
-    public Double psPercentile;
-    public Double psRatio;
-    public Double rvScore;
-    public String ticker;
+    private Double evToEbitda;
+    private Double evToEbitdaPercentile;
+    private Double evToGp;
+    private Double evToGpPercentile;
+    private Double pbPercentile;
+    private Double pbRatio;
+    private Double pePercentile;
+    private Double peRatio;
+    private Double psPercentile;
+    private Double psRatio;
+    private Double rvScore;
+    private String ticker;
 }

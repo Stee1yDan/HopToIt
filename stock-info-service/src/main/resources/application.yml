@@ -49,5 +49,11 @@ resilience4j:
         wait-duration: 5s
         max-attempts: '3'
 
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 1000000
+        readTimeout: 1000000
 server:
   port: 7777

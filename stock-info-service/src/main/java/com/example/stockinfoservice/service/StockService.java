@@ -22,12 +22,19 @@ public class StockService
     private String stockHistoricalData = "stock_historical_data";
     private String stockDailyHistoricalData = "stock_daily_historical_data";
     private String stockRvScore = "stock_rv_score";
+    private String stockHqmScore = "stock_hqm_score";
 
     private final StockClient stockClient;
     private final FirebaseService firebaseService;
-
     @Async
-    @Scheduled(fixedRate = 3600000)
+    @Scheduled(cron="@monthly")
+    private void setMonthlyRequests()
+    {
+        getRvScore();
+        getHqmScore();
+    }
+
+
     public void getRvScore()
     {
         List<StockRvScore> rvScores = stockClient.getStockRvScore();
@@ -36,6 +43,22 @@ public class StockService
         {
             try {
                 firebaseService.createDocument(stock.getTicker(), stock, stockRvScore);
+            }
+            catch (Exception e)
+            {
+                System.out.printf(e.toString());
+            }
+        });
+    }
+
+    public void getHqmScore()
+    {
+        List<StockHqmScore> hqmScores = stockClient.getStockHqmScore();
+
+        hqmScores.forEach(stock ->
+        {
+            try {
+                firebaseService.createDocument(stock.getTicker(), stock, stockHqmScore);
             }
             catch (Exception e)
             {
@@ -62,8 +85,8 @@ public class StockService
         });
     }
 
-//    @Async
-//    @Scheduled(fixedRate = 3600000)
+    @Async
+    @Scheduled(cron = "@hourly")
     public void initAllStocksWithHistoricalData()
     {
         List<String> symbols = Arrays.stream(StockSymbols.values()).map(Enum::toString).toList();
@@ -122,8 +145,8 @@ public class StockService
         });
     }
 
-//    @Async
-//    @Scheduled(fixedRate = 86400000)
+    @Async
+    @Scheduled(cron = "@daily")
     public void initAllStocksWithDailyHistoricalData()
     {
         List<String> symbols = Arrays.stream(StockSymbols.values()).map(Enum::toString).toList();
