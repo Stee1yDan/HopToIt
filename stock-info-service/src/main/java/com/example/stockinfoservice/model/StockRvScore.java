@@ -2,6 +2,7 @@ package com.example.stockinfoservice.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Transactional
 public class StockRvScore {
     private Double evToEbitda;
     private Double evToEbitdaPercentile;

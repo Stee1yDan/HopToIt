@@ -29,10 +29,10 @@ public class StockService
     private final StockRvScoreRepository rvScoreRepository;
     private final StockHqmScoreRepository hqmScoreRepository;
     @Async
-    @Scheduled(fixedDelay = 100000000)
+    @Scheduled(cron = "@monthly")
     private void setMonthlyRequests()
     {
-//        getRvScore();
+        getRvScore();
         getHqmScore();
     }
 
@@ -51,7 +51,7 @@ public class StockService
 
     public void initAllStocks()
     {
-        List<String> symbols = Arrays.stream(StockSymbols.values()).map(stockSymbols -> stockSymbols.toString()).toList();
+        List<String> symbols = Arrays.stream(StockSymbols.values()).map(Enum::toString).toList();
 
         symbols.forEach(s ->
         {
@@ -96,24 +96,15 @@ public class StockService
                 Double lastHourChange = (stockHistoricalInfoResponse.get(size-1).getClose() -
                         stockHistoricalInfoResponse.get(size-1).getOpen()) / stockHistoricalInfoResponse.get(size-1).getClose();
 
-                try {
-                    StockHqmScore hqmScore = (StockHqmScore) firebaseService.getDocument("stock_hqm_score", s, StockHqmScore.class);
+                if (hqmScoreRepository.findById(s).isPresent())
+                {
+                    StockHqmScore hqmScore = hqmScoreRepository.findById(s).get();
                     stockFormattedInfo.setHqmScore(hqmScore.getHQMScore());
                     stockFormattedInfo.setMonthlyChange(hqmScore.getOneMonthPriceReturn());
                 }
-                catch (Exception e)
-                {
-                    System.out.println(e);
-                }
 
-                try {
-                    StockRvScore rvScore = (StockRvScore) firebaseService.getDocument("stock_rv_score", s, StockRvScore.class);
-                    stockFormattedInfo.setRvScore(rvScore.getRvScore());
-                }
-                catch (Exception e)
-                {
-                    System.out.println(e);
-                }
+                if (rvScoreRepository.findById(s).isPresent())
+                    stockFormattedInfo.setRvScore(rvScoreRepository.findById(s).get().getRvScore());
 
                 stockFormattedInfo.setHourlyChange(lastHourChange);
 

@@ -47,9 +47,9 @@ public class StockInfoServiceApplication
     {
         return args ->
         {
-//            stockService.getHqmScore();
-//            stockService.getRvScore();
-//            stockService.initAllStocksWithHistoricalData();
+            stockService.getHqmScore();
+            stockService.getRvScore();
+            stockService.initAllStocksWithHistoricalData();
 //            stockService.initAllStocksWithDailyHistoricalData();
         };
     }
