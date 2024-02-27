@@ -2,6 +2,8 @@ package com.example.stockinfoservice.service;
 
 import com.example.stockinfoservice.client.StockClient;
 import com.example.stockinfoservice.model.*;
+import com.example.stockinfoservice.repository.StockHqmScoreRepository;
+import com.example.stockinfoservice.repository.StockRvScoreRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -21,16 +23,16 @@ public class StockService
     private String stockCollection = "stock";
     private String stockHistoricalData = "stock_historical_data";
     private String stockDailyHistoricalData = "stock_daily_historical_data";
-    private String stockRvScore = "stock_rv_score";
-    private String stockHqmScore = "stock_hqm_score";
 
     private final StockClient stockClient;
     private final FirebaseService firebaseService;
+    private final StockRvScoreRepository rvScoreRepository;
+    private final StockHqmScoreRepository hqmScoreRepository;
     @Async
-    @Scheduled(cron="@monthly")
+    @Scheduled(fixedDelay = 100000000)
     private void setMonthlyRequests()
     {
-        getRvScore();
+//        getRvScore();
         getHqmScore();
     }
 
@@ -38,33 +40,13 @@ public class StockService
     public void getRvScore()
     {
         List<StockRvScore> rvScores = stockClient.getStockRvScore();
-
-        rvScores.forEach(stock ->
-        {
-            try {
-                firebaseService.createDocument(stock.getTicker(), stock, stockRvScore);
-            }
-            catch (Exception e)
-            {
-                System.out.printf(e.toString());
-            }
-        });
+        rvScores.forEach(rvScoreRepository::save);
     }
 
     public void getHqmScore()
     {
         List<StockHqmScore> hqmScores = stockClient.getStockHqmScore();
-
-        hqmScores.forEach(stock ->
-        {
-            try {
-                firebaseService.createDocument(stock.getTicker(), stock, stockHqmScore);
-            }
-            catch (Exception e)
-            {
-                System.out.printf(e.toString());
-            }
-        });
+        hqmScores.forEach(hqmScoreRepository::save);
     }
 
     public void initAllStocks()
@@ -108,27 +90,32 @@ public class StockService
                 List<StockHistoricalInfoResponse> stockHistoricalInfoResponse =
                         stockClient.getHistoricalStockInfo(s, request);
 
-
                 StockFormattedInfo stockFormattedInfo = stockClient.getFormattedStockInfo(s);
 
                 int size = stockHistoricalInfoResponse.size();
                 Double lastHourChange = (stockHistoricalInfoResponse.get(size-1).getClose() -
                         stockHistoricalInfoResponse.get(size-1).getOpen()) / stockHistoricalInfoResponse.get(size-1).getClose();
 
-                Double lastDayChange = (stockHistoricalInfoResponse.get(size-1).getClose() -
-                        stockHistoricalInfoResponse.get(size-6).getOpen()) / stockHistoricalInfoResponse.get(size-1).getClose();
+                try {
+                    StockHqmScore hqmScore = (StockHqmScore) firebaseService.getDocument("stock_hqm_score", s, StockHqmScore.class);
+                    stockFormattedInfo.setHqmScore(hqmScore.getHQMScore());
+                    stockFormattedInfo.setMonthlyChange(hqmScore.getOneMonthPriceReturn());
+                }
+                catch (Exception e)
+                {
+                    System.out.println(e);
+                }
 
-                Double lastWeekChange = (stockHistoricalInfoResponse.get(size-1).getClose() -
-                        stockHistoricalInfoResponse.get(size-42).getOpen()) / stockHistoricalInfoResponse.get(size-1).getClose();
-
-                Double lastMonthChange = (stockHistoricalInfoResponse.get(size-1).getClose() -
-                        stockHistoricalInfoResponse.get(size-138).getOpen()) / stockHistoricalInfoResponse.get(size-1).getClose();
-
+                try {
+                    StockRvScore rvScore = (StockRvScore) firebaseService.getDocument("stock_rv_score", s, StockRvScore.class);
+                    stockFormattedInfo.setRvScore(rvScore.getRvScore());
+                }
+                catch (Exception e)
+                {
+                    System.out.println(e);
+                }
 
                 stockFormattedInfo.setHourlyChange(lastHourChange);
-                stockFormattedInfo.setDailyChange(lastDayChange);
-                stockFormattedInfo.setWeeklyChange(lastWeekChange);
-                stockFormattedInfo.setMonthlyChange(lastMonthChange);
 
                 firebaseService.createDocument(stockFormattedInfo.getSymbol(), stockFormattedInfo, stockCollection);
 
@@ -188,11 +175,11 @@ public class StockService
 
     public StockFormattedInfo getStock(String stockCollectionName, String documentId)
     {
-        return firebaseService.getStock(stockCollectionName, documentId);
+        return (StockFormattedInfo) firebaseService.getDocument(stockCollectionName, documentId, StockFormattedInfo.class);
     }
 
     public void deleteStock(String stockCollectionName, String documentId)
     {
-        firebaseService.deleteStock(stockCollectionName, documentId);
+        firebaseService.deleteDocument(stockCollectionName, documentId);
     }
 }

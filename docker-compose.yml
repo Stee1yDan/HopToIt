@@ -66,6 +66,22 @@ services:
       - "5433:5433"
     command: -p 5433
 
+  postgres-stock:
+    container_name: postgres-stock
+    image: postgres
+    environment:
+      POSTGRES_DB: stock-service
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: SpiralStaircase
+      PGDATA: /data/postgres
+    volumes:
+      - ./postgres-stock:/data/postgres
+    expose:
+      - "5434"
+    ports:
+      - "5434:5434"
+    command: -p 5434
+
   discovery:
     image: discovery:latest
     container_name: discovery

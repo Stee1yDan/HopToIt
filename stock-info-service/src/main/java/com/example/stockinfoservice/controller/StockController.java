@@ -31,14 +31,11 @@ public class StockController
     }
 
     @GetMapping("/get/{collectionName}/{documentId}")
-    @CircuitBreaker(name="default", fallbackMethod = "fallbackMethod")
-    @Retry(name="default")
-    public CompletableFuture<ResponseEntity<StockFormattedInfo>>  get(@PathVariable("collectionName") String collectionName,
+    public ResponseEntity<StockFormattedInfo>  get(@PathVariable("collectionName") String collectionName,
                                   @PathVariable(name = "documentId") String documentId)
     {
-        return CompletableFuture.supplyAsync(() -> {
+        System.out.println(stockService.getStock(collectionName, documentId));
             return new ResponseEntity<>(stockService.getStock(collectionName, documentId), HttpStatus.OK);
-        });
     }
 
     @DeleteMapping("/delete/{collectionName}/{documentId}")

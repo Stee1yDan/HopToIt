@@ -1,3 +1,21 @@
+spring:
+  application:
+    name: stock-service
+  datasource:
+    url: jdbc:postgresql://localhost:5434/stock-service
+    username: postgres
+    password: SpiralStaircase
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
 eureka:
   instance:
     appName: stock-info-service
@@ -48,6 +66,16 @@ resilience4j:
       inventory:
         wait-duration: 5s
         max-attempts: '3'
+
+hystrix:
+  command:
+    default:
+      execution:
+        timeout:
+          enabled: false
+      isolation:
+        thread:
+          timeoutInMilliseconds: 1000000
 
 feign:
   client:

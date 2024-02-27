@@ -42,14 +42,15 @@ public class StockInfoServiceApplication
         SpringApplication.run(StockInfoServiceApplication.class, args);
     }
 
+    @Bean
     CommandLineRunner runner()
     {
         return args ->
         {
-            stockService.getHqmScore();
-            stockService.getRvScore();
-            stockService.initAllStocksWithHistoricalData();
-            stockService.initAllStocksWithDailyHistoricalData();
+//            stockService.getHqmScore();
+//            stockService.getRvScore();
+//            stockService.initAllStocksWithHistoricalData();
+//            stockService.initAllStocksWithDailyHistoricalData();
         };
     }
 }

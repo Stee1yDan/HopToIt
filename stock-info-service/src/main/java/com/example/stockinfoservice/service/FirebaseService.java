@@ -10,8 +10,6 @@ import com.google.firebase.cloud.FirestoreClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.ExecutionException;
-
 @Service
 @RequiredArgsConstructor
 public class FirebaseService
@@ -33,7 +31,7 @@ public class FirebaseService
         }
     }
 
-    public StockFormattedInfo getStock(String collectionName, String documentId)
+    public Object getDocument(String collectionName, String documentId, Class template)
     {
         try{
             Firestore firestore = FirestoreClient.getFirestore();
@@ -41,7 +39,7 @@ public class FirebaseService
             ApiFuture<DocumentSnapshot> future = documentReference.get();
             DocumentSnapshot documentSnapshot = future.get();
             if (documentSnapshot != null)
-                return documentSnapshot.toObject(StockFormattedInfo.class);
+                return documentSnapshot.toObject(template);
             return null;
         }
         catch (Exception e)
@@ -49,12 +47,9 @@ public class FirebaseService
             System.out.println(e);
             return null;
         }
-
-
-
     }
 
-    public void deleteStock(String collectionName, String documentId)
+    public void deleteDocument(String collectionName, String documentId)
     {
         Firestore firestore = FirestoreClient.getFirestore();
         firestore

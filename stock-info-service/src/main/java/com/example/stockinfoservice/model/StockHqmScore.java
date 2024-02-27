@@ -1,6 +1,8 @@
 package com.example.stockinfoservice.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +14,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
 public class StockHqmScore {
     @JsonProperty("HQMScore")
     private Double HQMScore;
@@ -21,6 +24,7 @@ public class StockHqmScore {
     private Double oneYearReturnPercentile;
     private Double sixMonthPriceReturn;
     private Double sixMonthReturnPercentile;
+    @Id
     private String ticker;
     private Double threeMonthPriceReturn;
     private Double threeMonthReturnPercentile;
