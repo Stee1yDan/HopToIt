@@ -39,14 +39,14 @@ public class StockService
 
     public void getRvScore()
     {
-        List<StockRvScore> rvScores = stockClient.getStockRvScore();
-        rvScores.forEach(rvScoreRepository::save);
+        List<StockRvScore> rvScores = stockClient.getStockRvScore(Arrays.stream(StockSymbols.values()).map(Enum::toString).toArray(String[]::new));
+        rvScoreRepository.saveAll(rvScores);
     }
 
     public void getHqmScore()
     {
-        List<StockHqmScore> hqmScores = stockClient.getStockHqmScore();
-        hqmScores.forEach(hqmScoreRepository::save);
+        List<StockHqmScore> hqmScores = stockClient.getStockHqmScore(Arrays.stream(StockSymbols.values()).map(Enum::toString).toArray(String[]::new));
+        hqmScoreRepository.saveAll(hqmScores);
     }
 
     public void initAllStocks()

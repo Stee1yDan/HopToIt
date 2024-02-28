@@ -15,11 +15,11 @@ public interface StockClient
     @GetMapping("/api/v1/stocks/getFormattedInfo/{symbol}")
     StockFormattedInfo getFormattedStockInfo(@PathVariable("symbol") String symbol);
 
-    @GetMapping("/api/v1/stocks/getRvScore")
-    List<StockRvScore> getStockRvScore();
+    @PostMapping("/api/v1/stocks/getRvScore")
+    List<StockRvScore> getStockRvScore(String[] tickers);
 
-    @GetMapping("/api/v1/stocks/getHqmScore")
-    List<StockHqmScore> getStockHqmScore();
+    @PostMapping("/api/v1/stocks/getHqmScore")
+    List<StockHqmScore> getStockHqmScore(String[] tickers);
 
     @PostMapping("/api/v1/stocks/getHistoricalData/{symbol}")
     List<StockHistoricalInfoResponse> getHistoricalStockInfo(@PathVariable("symbol") String symbol, @RequestBody StockHistoricalInfoRequest request);
