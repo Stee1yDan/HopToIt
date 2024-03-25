@@ -1,8 +1,10 @@
 package com.example.stockinfoservice;
 
+import com.example.stockinfoservice.client.PredictionClient;
 import com.example.stockinfoservice.client.StockClient;
 import com.example.stockinfoservice.model.StockHistoricalInfoRequest;
 import com.example.stockinfoservice.model.StockHistoricalInfoResponse;
+import com.example.stockinfoservice.service.PredictionService;
 import com.example.stockinfoservice.service.StockService;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
@@ -25,6 +27,7 @@ import java.io.IOException;
 public class StockInfoServiceApplication
 {
     private final StockService stockService;
+    private final PredictionService predictionService;
     public static void main(String[] args) throws IOException
     {
         ClassLoader classLoader = StockInfoServiceApplication.class.getClassLoader();
@@ -47,6 +50,8 @@ public class StockInfoServiceApplication
     {
         return args ->
         {
+            predictionService.getPredictions();
+//            System.out.println(predictionClient.getStockPrediction("AAPL"));
 //            stockService.getHqmScore();
 //            stockService.getRvScore();
 //            stockService.initAllStocksWithHistoricalData();

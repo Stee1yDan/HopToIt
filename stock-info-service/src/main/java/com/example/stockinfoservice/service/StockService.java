@@ -30,7 +30,7 @@ public class StockService
     private final StockHqmScoreRepository hqmScoreRepository;
     @Async
     @Scheduled(cron = "@monthly")
-    private void setMonthlyRequests()
+    private void sendMonthlyRequests()
     {
         getRvScore();
         getHqmScore();
