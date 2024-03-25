@@ -1,7 +1,6 @@
 package com.example.authservice.auth;
 
 import com.example.authservice.interfaces.IAuthService;
-import com.example.authservice.client.UserClient;
 import com.example.authservice.confirmation.ConfirmationMessage;
 import com.example.authservice.interfaces.IMessageService;
 import com.example.authservice.interfaces.ITokenService;
@@ -32,7 +31,6 @@ public class AuthService implements IAuthService
     private final ITokenService tokenService;
     private final IMessageService messageService;
 
-    private final UserClient userClient;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
@@ -54,7 +52,7 @@ public class AuthService implements IAuthService
         userRepository.save(user);
         var confirmation = new Confirmation(user);
 
-        messageService.sendMessage(ConfirmationMessage.builder()
+        messageService.sendEmailConfirmationMessage(ConfirmationMessage.builder()
                 .email(confirmation.getUser().getEmail())
                 .token(confirmation.getToken()).build());
 
@@ -132,7 +130,7 @@ public class AuthService implements IAuthService
         if (currentConfirmation.getValidUntil().isBefore(LocalDateTime.now()))
             throw new RuntimeException("Confirmation is Expired");
 
-        userClient.registerUser(user.getUsername());
+        messageService.sendRegistrationMessage(user.getUsername());
 
         user.setEnabled(true);
 

@@ -96,13 +96,6 @@
       <version>2.16.0-rc1</version>
     </dependency>
 
-    <!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-openfeign -->
-    <dependency>
-      <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-starter-openfeign</artifactId>
-      <version>4.0.4</version>
-    </dependency>
-
     <!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-netflix-eureka-client -->
     <dependency>
       <groupId>org.springframework.cloud</groupId>

@@ -3,7 +3,7 @@ package com.example.userservice.controller;
 import com.example.userservice.dto.UserDto;
 import com.example.userservice.model.User;
 import com.example.userservice.interfaces.IUserService;
-import com.example.userservice.util.DtoConverter;
+import com.example.userservice.utils.DtoConverter;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
@@ -35,7 +35,7 @@ public class UserController
     @GetMapping("/register/{username}")
     @CircuitBreaker(name="default", fallbackMethod = "fallbackRegisterMethod")
     @Retry(name="default")
-    public CompletableFuture<ResponseEntity<Void>> registerUser(@PathVariable("username") String username)
+    public CompletableFuture<ResponseEntity<Void>> registerUser(@PathVariable("username") String username) // TODO: Deprecated, remove
     {
 
         return CompletableFuture.supplyAsync(() ->

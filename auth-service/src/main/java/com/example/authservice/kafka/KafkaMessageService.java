@@ -13,8 +13,14 @@ public class KafkaMessageService implements IMessageService
     private final KafkaTemplate<String,String> template;
 
     @Override
-    public void sendMessage(Object object) // TODO: Topic management
+    public void sendEmailConfirmationMessage(Object object)
     {
         template.send("emailTopic", JsonMapper.convertToJsonString(object));
+    }
+
+    @Override
+    public void sendRegistrationMessage(Object object)
+    {
+        template.send("registerTopic", JsonMapper.convertToJsonString(object));
     }
 }

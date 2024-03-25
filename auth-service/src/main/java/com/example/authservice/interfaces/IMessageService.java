@@ -2,5 +2,7 @@ package com.example.authservice.interfaces;
 
 public interface IMessageService
 {
-    void sendMessage(Object object);
+    void sendEmailConfirmationMessage(Object object);
+
+    void sendRegistrationMessage(Object object);
 }

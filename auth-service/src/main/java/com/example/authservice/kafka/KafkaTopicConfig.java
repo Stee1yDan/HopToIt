@@ -14,4 +14,11 @@ public class KafkaTopicConfig
         return TopicBuilder.name("emailTopic")
                 .build();
     }
+
+    @Bean
+    public NewTopic registerTopic()
+    {
+        return TopicBuilder.name("registerTopic")
+                .build();
+    }
 }
