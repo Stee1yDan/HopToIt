@@ -13,7 +13,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 @RestController
-@RequestMapping("api/v1/stocks")
+@RequestMapping("api/v1/stock")
 @RequiredArgsConstructor
 public class StockController
 {

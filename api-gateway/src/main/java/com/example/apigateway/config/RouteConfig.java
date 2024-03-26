@@ -24,19 +24,14 @@ public class RouteConfig
                 .route(p -> p
                         .path("/api/v1/users/**")
                         .filters(f -> f
-                                .filter(filterFactory.getAuthFilter())
-                                .filter(filterFactory.getAuthUserFilter())) //TODO: GatewayFilterFactory
+                                .filter(filterFactory.getAuthUserFilter()))
                         .uri("lb://user-service"))
                 .route(p -> p
                         .path("/api/v1/auth/**")
                         .uri("lb://auth-service"))
                 .route(p -> p
-                        .path("/eureka")
-                        .filters(f -> f
-                                .filter(filterFactory.getAuthFilter())
-                                .filter(filterFactory.getRoleFilter(Role.ADMIN))
-                                .rewritePath("/eureka","/"))
-                        .uri("http://localhost:8761"))
+                        .path("/api/v1/stocks/**")
+                        .uri("lb://stock-info-service"))
                 .build();
     }
 

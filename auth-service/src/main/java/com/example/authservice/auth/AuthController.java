@@ -87,7 +87,7 @@ public class AuthController
     public ResponseEntity<Boolean> isUsernameValid(@PathVariable("token") String token,
                                                                       @PathVariable("username") String username)
     {
-        return ResponseEntity.ok(jwtService.isUserValid(token, username));
+        return ResponseEntity.ok(jwtService.isUserValid(token, username) && jwtService.isTokenValid(token));
     }
 
     public CompletableFuture<ResponseEntity<Boolean>> fallbackTokenMethod(String token, Throwable throwable)

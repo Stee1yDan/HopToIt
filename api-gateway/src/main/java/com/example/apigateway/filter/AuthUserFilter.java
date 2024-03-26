@@ -41,7 +41,7 @@ public class AuthUserFilter implements GatewayFilter
 
         final String token = request.getHeaders().getOrEmpty("Authorization").get(0).substring(7);
 
-        String tokenUri = "http://localhost:8222/api/v1/auth/validate/%s/%s";
+        String tokenUri = "http://localhost:8222/api/v1/auth/validate/%s/%s"; //TODO: Change to odmain name
 
         webClient = WebClient.builder().build();
 

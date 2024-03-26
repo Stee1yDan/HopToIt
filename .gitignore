@@ -1,4 +1,5 @@
 .idea
 /postgres-inventory
 /postgres-order
+/postgres-stock
 /api-gateway/src/main/resources/cert.pfx
