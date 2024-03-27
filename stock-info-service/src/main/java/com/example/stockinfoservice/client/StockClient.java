@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
+import java.util.concurrent.Future;
 
 @FeignClient("stock-data-api")
 public interface StockClient
@@ -15,11 +16,14 @@ public interface StockClient
     @GetMapping("/api/v1/stocks/getFormattedInfo/{symbol}")
     StockFormattedInfo getFormattedStockInfo(@PathVariable("symbol") String symbol);
 
-    @PostMapping("/api/v1/stocks/getRvScore")
-    List<StockRvScore> getStockRvScore(String[] tickers);
+    @GetMapping("/api/v1/stocks/calculateMetrics")
+    void updateScoreInfo();
 
-    @PostMapping("/api/v1/stocks/getHqmScore")
-    List<StockHqmScore> getStockHqmScore(String[] tickers);
+    @GetMapping("/api/v1/stocks/getRvScore")
+    List<StockRvScore> getStockRvScore();
+
+    @GetMapping("/api/v1/stocks/getHqmScore")
+    List<StockHqmScore> getStockHqmScore();
 
     @PostMapping("/api/v1/stocks/getHistoricalData/{symbol}")
     List<StockHistoricalInfoResponse> getHistoricalStockInfo(@PathVariable("symbol") String symbol, @RequestBody StockHistoricalInfoRequest request);

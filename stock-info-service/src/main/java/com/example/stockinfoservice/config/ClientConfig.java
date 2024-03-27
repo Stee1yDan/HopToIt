@@ -9,8 +9,8 @@ import org.springframework.core.env.ConfigurableEnvironment;
 public class ClientConfig {
     @Bean
     public static Request.Options requestOptions(ConfigurableEnvironment env) {
-        int ribbonReadTimeout = env.getProperty("ribbon.ReadTimeout", int.class, 1000000);
-        int ribbonConnectionTimeout = env.getProperty("ribbon.ConnectTimeout", int.class, 1000000);
+        int ribbonReadTimeout = env.getProperty("ribbon.ReadTimeout", int.class, 160000000);
+        int ribbonConnectionTimeout = env.getProperty("ribbon.ConnectTimeout", int.class, 160000000);
 
         return new Request.Options(ribbonConnectionTimeout, ribbonReadTimeout);
     }

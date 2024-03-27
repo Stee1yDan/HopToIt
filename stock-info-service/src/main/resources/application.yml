@@ -75,13 +75,13 @@ hystrix:
           enabled: false
       isolation:
         thread:
-          timeoutInMilliseconds: 1000000
+          timeoutInMilliseconds: 160000000
 
 feign:
   client:
     config:
       default:
-        connectTimeout: 1000000
-        readTimeout: 1000000
+        connectTimeout: 160000000
+        readTimeout: 160000000
 server:
   port: 7777

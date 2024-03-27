@@ -1,9 +1,5 @@
 package com.example.stockinfoservice;
 
-import com.example.stockinfoservice.client.PredictionClient;
-import com.example.stockinfoservice.client.StockClient;
-import com.example.stockinfoservice.model.StockHistoricalInfoRequest;
-import com.example.stockinfoservice.model.StockHistoricalInfoResponse;
 import com.example.stockinfoservice.service.PredictionService;
 import com.example.stockinfoservice.service.StockService;
 import com.google.auth.oauth2.GoogleCredentials;
@@ -15,7 +11,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
-import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -50,12 +45,11 @@ public class StockInfoServiceApplication
     {
         return args ->
         {
+            stockService.getHqmScore();
+            stockService.getRvScore();
             predictionService.getPredictions();
-//            System.out.println(predictionClient.getStockPrediction("AAPL"));
-//            stockService.getHqmScore();
-//            stockService.getRvScore();
-//            stockService.initAllStocksWithHistoricalData();
-//            stockService.initAllStocksWithDailyHistoricalData();
+            stockService.initAllStocksWithHistoricalData();
+//            stockService.getStocksDailyData();
         };
     }
 }

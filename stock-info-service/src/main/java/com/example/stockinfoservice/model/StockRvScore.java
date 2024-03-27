@@ -15,8 +15,9 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Transactional
 public class StockRvScore {
+    @Id
+    private String ticker;
     private Double evToEbitda;
     private Double evToEbitdaPercentile;
     private Double evToGp;
@@ -28,6 +29,4 @@ public class StockRvScore {
     private Double psPercentile;
     private Double psRatio;
     private Double rvScore;
-    @Id
-    private String ticker;
 }

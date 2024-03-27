@@ -26,12 +26,6 @@ public class AuthUserFilter implements GatewayFilter
         final Pattern pattern = Pattern.compile("\\b(\\w+)$");
         Matcher m = pattern.matcher(uri);
 
-//        if (!m.find())
-//        {
-//            System.out.println("hahahah");
-//            return onError(exchange, HttpStatus.UNAUTHORIZED);
-//        }
-
         m.find();
         String username = m.group(0);
 
@@ -41,7 +35,7 @@ public class AuthUserFilter implements GatewayFilter
 
         final String token = request.getHeaders().getOrEmpty("Authorization").get(0).substring(7);
 
-        String tokenUri = "http://localhost:8222/api/v1/auth/validate/%s/%s"; //TODO: Change to odmain name
+        String tokenUri = "http://localhost:8222/api/v1/auth/validate/%s/%s"; //TODO: Move to enviroment variable
 
         webClient = WebClient.builder().build();
 
@@ -52,7 +46,7 @@ public class AuthUserFilter implements GatewayFilter
                 .bodyToMono(Boolean.class)
                 .flatMap(response -> {
                     if(Boolean.FALSE.equals(response))
-                        return Mono.error(new RuntimeException("Unauthorized access to application"));
+                        return Mono.error(new RuntimeException("unauthorized access to application"));
                     return chain.filter(exchange);
                 });
     }

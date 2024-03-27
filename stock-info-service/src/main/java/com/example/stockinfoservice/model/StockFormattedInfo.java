@@ -28,6 +28,7 @@ public class StockFormattedInfo
     private Double marketCap;
     private Double hqmScore;
     private Double rvScore;
+    private Double prediction;
     private Double hourlyChange;
     private Double dailyChange;
     private Double weeklyChange;

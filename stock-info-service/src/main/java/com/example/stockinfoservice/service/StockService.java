@@ -3,6 +3,7 @@ package com.example.stockinfoservice.service;
 import com.example.stockinfoservice.client.StockClient;
 import com.example.stockinfoservice.model.*;
 import com.example.stockinfoservice.repository.StockHqmScoreRepository;
+import com.example.stockinfoservice.repository.StockPredictionRepository;
 import com.example.stockinfoservice.repository.StockRvScoreRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
@@ -13,7 +14,9 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.Future;
 
 @Service
 @EnableScheduling
@@ -26,26 +29,34 @@ public class StockService
 
     private final StockClient stockClient;
     private final FirebaseService firebaseService;
+
     private final StockRvScoreRepository rvScoreRepository;
     private final StockHqmScoreRepository hqmScoreRepository;
+    private final StockPredictionRepository predictionRepository;
     @Async
     @Scheduled(cron = "@monthly")
     private void sendMonthlyRequests()
     {
+        updateScore();
         getRvScore();
         getHqmScore();
+    }
+
+    public void updateScore()
+    {
+        stockClient.updateScoreInfo();
     }
 
 
     public void getRvScore()
     {
-        List<StockRvScore> rvScores = stockClient.getStockRvScore(Arrays.stream(StockSymbols.values()).map(Enum::toString).toArray(String[]::new));
+        List<StockRvScore> rvScores = stockClient.getStockRvScore();
         rvScoreRepository.saveAll(rvScores);
     }
 
     public void getHqmScore()
     {
-        List<StockHqmScore> hqmScores = stockClient.getStockHqmScore(Arrays.stream(StockSymbols.values()).map(Enum::toString).toArray(String[]::new));
+        List<StockHqmScore> hqmScores = stockClient.getStockHqmScore();
         hqmScoreRepository.saveAll(hqmScores);
     }
 
@@ -108,6 +119,13 @@ public class StockService
 
                 stockFormattedInfo.setHourlyChange(lastHourChange);
 
+
+                if (predictionRepository.findByTicker(s).isPresent()){
+                    List<StockPrediction> predictions =  predictionRepository.findByTicker(s).get();
+                    predictions = predictions.stream().sorted(Comparator.comparing(StockPrediction::getTime).reversed()).toList();
+                    stockFormattedInfo.setPrediction(predictions.get(0).getPredictedValue());
+                }
+
                 firebaseService.createDocument(stockFormattedInfo.getSymbol(), stockFormattedInfo, stockCollection);
 
                 firebaseService.createDocument(s,
@@ -125,7 +143,7 @@ public class StockService
 
     @Async
     @Scheduled(cron = "@daily")
-    public void initAllStocksWithDailyHistoricalData()
+    public void getStocksDailyData()
     {
         List<String> symbols = Arrays.stream(StockSymbols.values()).map(Enum::toString).toList();
 

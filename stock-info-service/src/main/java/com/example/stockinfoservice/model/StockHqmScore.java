@@ -16,8 +16,9 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Transactional
 public class StockHqmScore {
+    @Id
+    private String ticker;
     @JsonProperty("HQMScore")
     private Double HQMScore;
     private Double oneMonthPriceReturn;
@@ -26,8 +27,6 @@ public class StockHqmScore {
     private Double oneYearReturnPercentile;
     private Double sixMonthPriceReturn;
     private Double sixMonthReturnPercentile;
-    @Id
-    private String ticker;
     private Double threeMonthPriceReturn;
     private Double threeMonthReturnPercentile;
 }
