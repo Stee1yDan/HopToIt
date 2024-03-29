@@ -83,7 +83,7 @@ services:
     command: -p 5434
 
   discovery:
-    image: discovery:latest
+    image: jabodav/discovery:latest
     container_name: discovery
     environment:
       - SPRING_PROFILES_ACTIVE=docker
@@ -108,7 +108,7 @@ services:
     command: --spring.profiles.active=docker
 
   user-service:
-    image: user-service:latest
+    image: jabodav/user-service:latest
     container_name: user-service
     environment:
       - SPRING_PROFILES_ACTIVE=docker

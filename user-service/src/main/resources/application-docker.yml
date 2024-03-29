@@ -1,6 +1,4 @@
 spring:
-  kafka:
-    bootstrapServers: broker:29092
   datasource:
     url: jdbc:postgresql://host.docker.internal:5433/user-service
     username: postgres
@@ -17,6 +15,8 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   application:
     name: user-service
+  kafka:
+    bootstrapServers: broker:29092
 
 eureka:
   instance:

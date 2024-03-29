@@ -27,6 +27,11 @@ public class RouteConfig
                                 .filter(filterFactory.getAuthUserFilter()))
                         .uri("lb://user-service"))
                 .route(p -> p
+                        .path("/api/v1/portfolios/**")
+                        .filters(f -> f
+                                .filter(filterFactory.getAuthUserFilter()))
+                        .uri("lb://user-service"))
+                .route(p -> p
                         .path("/api/v1/auth/**")
                         .uri("lb://auth-service"))
                 .route(p -> p

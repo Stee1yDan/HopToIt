@@ -1,6 +1,4 @@
 spring:
-  kafka:
-    bootstrapServers: localhost:9092
   datasource:
     url: jdbc:postgresql://localhost:5433/user-service
     username: postgres
@@ -17,6 +15,8 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   application:
     name: user-service
+  kafka:
+    bootstrapServers: localhost:9092
 
 management:
   tracing:
