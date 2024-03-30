@@ -1,5 +1,7 @@
 package com.example.stockinfoservice.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,8 +13,10 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
 public class StockFormattedInfo
 {
+    @Id
     private String symbol;
     private String longName;
     private String sector;

@@ -4,6 +4,7 @@ import com.example.stockinfoservice.client.StockClient;
 import com.example.stockinfoservice.model.*;
 import com.example.stockinfoservice.repository.StockHqmScoreRepository;
 import com.example.stockinfoservice.repository.StockPredictionRepository;
+import com.example.stockinfoservice.repository.StockRepository;
 import com.example.stockinfoservice.repository.StockRvScoreRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
@@ -33,6 +34,7 @@ public class StockService
     private final StockRvScoreRepository rvScoreRepository;
     private final StockHqmScoreRepository hqmScoreRepository;
     private final StockPredictionRepository predictionRepository;
+    private final StockRepository stockRepository;
     @Async
     @Scheduled(cron = "@monthly")
     private void sendMonthlyRequests()
@@ -125,6 +127,8 @@ public class StockService
                     predictions = predictions.stream().sorted(Comparator.comparing(StockPrediction::getTime).reversed()).toList();
                     stockFormattedInfo.setPrediction(predictions.get(0).getPredictedValue());
                 }
+
+                stockRepository.save(stockFormattedInfo);
 
                 firebaseService.createDocument(stockFormattedInfo.getSymbol(), stockFormattedInfo, stockCollection);
 
