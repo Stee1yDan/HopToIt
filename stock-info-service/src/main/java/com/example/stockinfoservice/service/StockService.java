@@ -128,9 +128,11 @@ public class StockService
                     stockFormattedInfo.setPrediction(predictions.get(0).getPredictedValue());
                 }
 
-                stockRepository.save(stockFormattedInfo);
+
 
                 firebaseService.createDocument(stockFormattedInfo.getSymbol(), stockFormattedInfo, stockCollection);
+                stockFormattedInfo.setLongBusinessSummary(stockFormattedInfo.getLongBusinessSummary().substring(0,254));
+                stockRepository.save(stockFormattedInfo);
 
                 firebaseService.createDocument(s,
                         StockTimestamps.builder()

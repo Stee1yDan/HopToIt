@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @FeignClient("stock-prediction-service")
 public interface PredictionClient {
-    @GetMapping("/api/v1/models/predict//{symbol}")
+    @GetMapping("/api/v1/models/predict/{symbol}")
     String getStockPrediction(@PathVariable("symbol") String symbol);
 }

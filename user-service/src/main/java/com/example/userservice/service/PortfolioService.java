@@ -1,10 +1,13 @@
 package com.example.userservice.service;
 
+import com.example.userservice.client.PortfolioClient;
+import com.example.userservice.dto.PortfolioDto;
 import com.example.userservice.model.Portfolio;
 import com.example.userservice.model.User;
 import com.example.userservice.repository.PortfolioRepository;
 import com.example.userservice.repository.UserRepository;
 import com.example.userservice.interfaces.IPortfolioService;
+import com.example.userservice.utils.DtoConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +19,7 @@ import java.util.stream.Collectors;
 public class PortfolioService implements IPortfolioService
 {
     private final UserRepository userRepository;
+    private final PortfolioClient portfolioClient;
     @Override
     public void updatePortfolio(Portfolio portfolio, String username, String name)
     {
@@ -23,12 +27,16 @@ public class PortfolioService implements IPortfolioService
         List<Portfolio> portfolios = currentUser.getPortfolios();
 
         if (portfolios.stream()
-                .map(p -> p.getName())
-                .collect(Collectors.toList()).contains(portfolio.getName()))
+                .map(Portfolio::getName)
+                .toList().contains(portfolio.getName()))
         {
+            PortfolioDto portfolioDto = portfolioClient.calculatePortfolioMetrics(DtoConverter.convertPortfolio(portfolio));
+            Portfolio currentPortfolio = DtoConverter.convertPortfolioDto(portfolioDto);
             portfolios.removeIf(p -> p.getName().equals(name));
-            portfolios.add(portfolio);
+            portfolios.add(currentPortfolio);
         }
+
+
 
         userRepository.save(currentUser);
     }
@@ -39,14 +47,15 @@ public class PortfolioService implements IPortfolioService
         User currentUser = userRepository.findUserByUsername(username);
         List<Portfolio> portfolios = currentUser.getPortfolios();
 
-        Portfolio currentPortfolio = new Portfolio(null, portfolio.getName(), portfolio.getStocks());
-
-        if (portfolios.stream()
-                .map(p -> p.getName())
-                .collect(Collectors.toList()).contains(portfolio.getName()))
+        if (portfolios.stream() //TODO: Something
+                .map(Portfolio::getName)
+                .toList().contains(portfolio.getName()))
         {
             return;
         }
+
+        PortfolioDto portfolioDto = portfolioClient.calculatePortfolioMetrics(DtoConverter.convertPortfolio(portfolio));
+        Portfolio currentPortfolio = DtoConverter.convertPortfolioDto(portfolioDto);
 
         portfolios.add(currentPortfolio);
         currentUser.setPortfolios(portfolios);

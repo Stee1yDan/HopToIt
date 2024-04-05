@@ -66,6 +66,7 @@ public class PortfolioController
                                                                         String username,
                                                                         Throwable throwable)
     {
+        throwable.printStackTrace();
         return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(null, HttpStatus.CONFLICT));
     }
 

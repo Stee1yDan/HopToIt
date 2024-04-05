@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 @SpringBootApplication
+@EnableFeignClients
 @RequiredArgsConstructor
 public class UserServiceApplication {
 
@@ -37,7 +39,7 @@ public class UserServiceApplication {
 			stocks.add(new Stock(null, "AAPL", 4));
 			stocks.add(new Stock(null, "MSFT", 10));
 
-			Portfolio portfolio = new Portfolio(1L,"Portfolio_1", stocks);
+			Portfolio portfolio = new Portfolio(1L,"Portfolio_1", 0.3,0.3,0.3,0.3, 0.3, 1000D, stocks);
 			userService.saveUser(
 					User.builder()
 							.id(1L)

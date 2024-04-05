@@ -18,12 +18,42 @@ public class DtoConverter
                 .count(stock.getCount())
                 .build();
     }
+
+    public static Stock convertStockDto(StockDto stockDto)
+    {
+        return Stock.builder()
+                .name(stockDto.getName())
+                .count(stockDto.getCount())
+                .build();
+    }
     public static PortfolioDto convertPortfolio(Portfolio portfolio)
     {
         return PortfolioDto.builder()
                 .name(portfolio.getName())
+                .volatility(portfolio.getVolatility())
+                .sharpe(portfolio.getSharpe())
+                .variance(portfolio.getVariance())
+                .expectedReturn(portfolio.getExpectedReturn())
+                .portfolioPrice(portfolio.getPortfolioPrice())
+                .freeFunds(portfolio.getFreeFunds())
                 .stocks(portfolio.getStocks().stream()
-                        .map(stock -> convertStock(stock)).
+                        .map(DtoConverter::convertStock).
+                        collect(Collectors.toList()))
+                .build();
+    }
+
+    public static Portfolio convertPortfolioDto(PortfolioDto portfolioDto)
+    {
+        return Portfolio.builder()
+                .name(portfolioDto.getName())
+                .volatility(portfolioDto.getVolatility())
+                .sharpe(portfolioDto.getSharpe())
+                .variance(portfolioDto.getVariance())
+                .expectedReturn(portfolioDto.getExpectedReturn())
+                .portfolioPrice(portfolioDto.getPortfolioPrice())
+                .freeFunds(portfolioDto.getFreeFunds())
+                .stocks(portfolioDto.getStocks().stream()
+                        .map(DtoConverter::convertStockDto).
                         collect(Collectors.toList()))
                 .build();
     }
@@ -34,7 +64,7 @@ public class DtoConverter
                 .username(user.getUsername())
                 .description(user.getDescription())
                 .portfolios(user.getPortfolios().stream()
-                        .map(portfolio -> convertPortfolio(portfolio))
+                        .map(DtoConverter::convertPortfolio)
                         .collect(Collectors.toList()))
                 .build();
     }
