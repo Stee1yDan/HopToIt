@@ -2,6 +2,7 @@ package com.example.userservice.service;
 
 import com.example.userservice.client.PortfolioClient;
 import com.example.userservice.dto.PortfolioDto;
+import com.example.userservice.model.EfficientFrontier;
 import com.example.userservice.model.Portfolio;
 import com.example.userservice.model.User;
 import com.example.userservice.repository.PortfolioRepository;
@@ -77,7 +78,14 @@ public class PortfolioService implements IPortfolioService
     {
         User currentUser = userRepository.findUserByUsername(username);
         List<Portfolio> portfolios = currentUser.getPortfolios();
-        return portfolios.stream().filter(p -> p.getName().equals(name)).collect(Collectors.toList()).get(0);
+        return portfolios.stream().filter(p -> p.getName().equals(name)).toList().get(0);
 
+    }
+
+    @Override
+    public EfficientFrontier getEfficientFrontier(Portfolio portfolio) {
+        var res = portfolioClient.getEfficientFrontier(DtoConverter.convertPortfolio(portfolio));
+        System.out.println(res.getMaxReturnsPortfolio().getExpectedReturn());
+        return res;
     }
 }

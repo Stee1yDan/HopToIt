@@ -1,5 +1,6 @@
 package com.example.userservice.controller;
 
+import com.example.userservice.model.EfficientFrontier;
 import com.example.userservice.model.Portfolio;
 import com.example.userservice.interfaces.IPortfolioService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
@@ -44,6 +45,16 @@ public class PortfolioController
 
     }
 
+    @PostMapping("/getEfficientFrontier")
+    @CircuitBreaker(name="default", fallbackMethod = "fallbackGetEfficientFrontier")
+    @Retry(name="default")
+    public CompletableFuture<ResponseEntity<EfficientFrontier>> getEfficientFrontier(@RequestBody Portfolio portfolio)
+    {
+        return CompletableFuture.supplyAsync(() -> {
+            return new ResponseEntity<>(portfolioService.getEfficientFrontier(portfolio), HttpStatus.OK);
+        });
+    }
+
     @DeleteMapping("/delete/{name}/{username}")
     @CircuitBreaker(name="default", fallbackMethod = "fallbackDeleteMethod")
     @Retry(name="default")
@@ -74,6 +85,13 @@ public class PortfolioController
                                                                         String name,
                                                                         Throwable throwable)
     {
+        return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(null, HttpStatus.CONFLICT));
+    }
+
+    public CompletableFuture<ResponseEntity<Void>> fallbackGetEfficientFrontier(Portfolio portfolio,
+                                                                        Throwable throwable)
+    {
+        throwable.printStackTrace();
         return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(null, HttpStatus.CONFLICT));
     }
 
