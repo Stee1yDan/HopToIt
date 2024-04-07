@@ -18,5 +18,5 @@ public class EfficientFrontier {
     private PortfolioDto maxSharpePortfolio;
     private PortfolioDto maxReturnsPortfolio;
     private PortfolioDto minVolatilityPortfolio;
-    private List<PortfolioDto> efficientFront;
+    private List<PortfolioDto> efficientFrontier;
 }

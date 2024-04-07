@@ -45,10 +45,10 @@ public class PortfolioController
 
     }
 
-    @PostMapping("/getEfficientFrontier")
+    @PostMapping("/getEfficientFrontier/{username}")
     @CircuitBreaker(name="default", fallbackMethod = "fallbackGetEfficientFrontier")
     @Retry(name="default")
-    public CompletableFuture<ResponseEntity<EfficientFrontier>> getEfficientFrontier(@RequestBody Portfolio portfolio)
+    public CompletableFuture<ResponseEntity<EfficientFrontier>> getEfficientFrontier(@RequestBody Portfolio portfolio, @PathVariable("username") String username)
     {
         return CompletableFuture.supplyAsync(() -> {
             return new ResponseEntity<>(portfolioService.getEfficientFrontier(portfolio), HttpStatus.OK);
@@ -89,7 +89,8 @@ public class PortfolioController
     }
 
     public CompletableFuture<ResponseEntity<Void>> fallbackGetEfficientFrontier(Portfolio portfolio,
-                                                                        Throwable throwable)
+                                                                                String username,
+                                                                                Throwable throwable)
     {
         throwable.printStackTrace();
         return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(null, HttpStatus.CONFLICT));
