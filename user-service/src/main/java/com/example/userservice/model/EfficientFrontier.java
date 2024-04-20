@@ -15,8 +15,10 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EfficientFrontier {
+    private PortfolioDto initialPortfolio;
     private PortfolioDto maxSharpePortfolio;
     private PortfolioDto maxReturnsPortfolio;
     private PortfolioDto minVolatilityPortfolio;
     private List<PortfolioDto> efficientFrontier;
+    private List<PortfolioDto> randomPortfolios;
 }

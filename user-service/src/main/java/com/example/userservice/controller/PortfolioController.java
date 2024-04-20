@@ -1,5 +1,6 @@
 package com.example.userservice.controller;
 
+import com.example.userservice.model.Correlation;
 import com.example.userservice.model.EfficientFrontier;
 import com.example.userservice.model.Portfolio;
 import com.example.userservice.interfaces.IPortfolioService;
@@ -45,13 +46,23 @@ public class PortfolioController
 
     }
 
-    @PostMapping("/getEfficientFrontier/{username}")
+    @PostMapping("/getEfficientFrontier/**")
     @CircuitBreaker(name="default", fallbackMethod = "fallbackGetEfficientFrontier")
     @Retry(name="default")
-    public CompletableFuture<ResponseEntity<EfficientFrontier>> getEfficientFrontier(@RequestBody Portfolio portfolio, @PathVariable("username") String username)
+    public CompletableFuture<ResponseEntity<EfficientFrontier>> getEfficientFrontier(@RequestBody Portfolio portfolio)
     {
         return CompletableFuture.supplyAsync(() -> {
             return new ResponseEntity<>(portfolioService.getEfficientFrontier(portfolio), HttpStatus.OK);
+        });
+    }
+
+    @PostMapping("/getCorrelation/**")
+    @CircuitBreaker(name="default", fallbackMethod = "fallbackGetCorrelation")
+    @Retry(name="default")
+    public CompletableFuture<ResponseEntity<Correlation[]>> getCorrelation(@RequestBody Portfolio portfolio)
+    {
+        return CompletableFuture.supplyAsync(() -> {
+            return new ResponseEntity<>(portfolioService.getCorrelation(portfolio), HttpStatus.OK);
         });
     }
 
@@ -65,35 +76,38 @@ public class PortfolioController
         });
     }
 
-    public CompletableFuture<ResponseEntity<Void>> fallbackUpdateMethod(Portfolio portfolio,
+    public CompletableFuture<ResponseEntity<String>> fallbackUpdateMethod(Portfolio portfolio,
                                                                         String username,
                                                                         String name,
                                                                         Throwable throwable)
     {
-        return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(null, HttpStatus.CONFLICT));
+        return CompletableFuture.supplyAsync(() -> new ResponseEntity<>("Something went wrong", HttpStatus.CONFLICT));
     }
 
-    public CompletableFuture<ResponseEntity<Void>> fallbackAddMethod(Portfolio portfolio,
+    public CompletableFuture<ResponseEntity<String>> fallbackAddMethod(Portfolio portfolio,
                                                                         String username,
                                                                         Throwable throwable)
     {
-        throwable.printStackTrace();
-        return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(null, HttpStatus.CONFLICT));
+        return CompletableFuture.supplyAsync(() -> new ResponseEntity<>("Something went wrong", HttpStatus.CONFLICT));
     }
 
-    public CompletableFuture<ResponseEntity<Void>> fallbackDeleteMethod(String username,
+    public CompletableFuture<ResponseEntity<String>> fallbackDeleteMethod(String username,
                                                                         String name,
                                                                         Throwable throwable)
     {
-        return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(null, HttpStatus.CONFLICT));
+        return CompletableFuture.supplyAsync(() -> new ResponseEntity<>("Something went wrong", HttpStatus.CONFLICT));
     }
 
-    public CompletableFuture<ResponseEntity<Void>> fallbackGetEfficientFrontier(Portfolio portfolio,
-                                                                                String username,
+    public CompletableFuture<ResponseEntity<String>> fallbackGetEfficientFrontier(Portfolio portfolio,
                                                                                 Throwable throwable)
     {
-        throwable.printStackTrace();
-        return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(null, HttpStatus.CONFLICT));
+        return CompletableFuture.supplyAsync(() -> new ResponseEntity<>("Couldn't get efficient frontier", HttpStatus.CONFLICT));
+    }
+
+    public CompletableFuture<ResponseEntity<String>> fallbackGetCorrelation(Portfolio portfolio,
+                                                                                Throwable throwable)
+    {
+        return CompletableFuture.supplyAsync(() -> new ResponseEntity<>("Couldn't get correlation", HttpStatus.CONFLICT));
     }
 
 

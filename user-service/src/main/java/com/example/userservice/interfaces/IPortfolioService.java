@@ -1,6 +1,7 @@
 package com.example.userservice.interfaces;
 
 import com.example.userservice.dto.PortfolioDto;
+import com.example.userservice.model.Correlation;
 import com.example.userservice.model.EfficientFrontier;
 import com.example.userservice.model.Portfolio;
 
@@ -15,5 +16,7 @@ public interface IPortfolioService
     Portfolio getPortfolio(String username, String name);
 
     EfficientFrontier getEfficientFrontier(Portfolio portfolio);
+
+    Correlation[] getCorrelation(Portfolio portfolio);
 
 }

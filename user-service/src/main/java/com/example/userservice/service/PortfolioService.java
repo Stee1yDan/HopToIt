@@ -2,6 +2,7 @@ package com.example.userservice.service;
 
 import com.example.userservice.client.PortfolioClient;
 import com.example.userservice.dto.PortfolioDto;
+import com.example.userservice.model.Correlation;
 import com.example.userservice.model.EfficientFrontier;
 import com.example.userservice.model.Portfolio;
 import com.example.userservice.model.User;
@@ -85,7 +86,11 @@ public class PortfolioService implements IPortfolioService
     @Override
     public EfficientFrontier getEfficientFrontier(Portfolio portfolio) {
         var res = portfolioClient.getEfficientFrontier(DtoConverter.convertPortfolio(portfolio));
-        System.out.println(res.getMaxReturnsPortfolio().getExpectedReturn());
         return res;
+    }
+
+    @Override
+    public Correlation[] getCorrelation(Portfolio portfolio) {
+        return portfolioClient.getCorrelation(DtoConverter.convertPortfolio(portfolio));
     }
 }

@@ -24,7 +24,7 @@ public class PredictionService {
     private final StockPredictionRepository predictionRepository;
 
     @Async
-    @Scheduled(cron = "@daily")
+    @Scheduled(cron = "0 0 * * 1-5")
     public void getPredictions() {
         List<String> symbols = Arrays.stream(StockSymbols.values()).map(Enum::toString).toList();
         for (String s: symbols)

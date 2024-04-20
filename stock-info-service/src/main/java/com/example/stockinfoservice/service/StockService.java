@@ -81,7 +81,7 @@ public class StockService
     }
 
     @Async
-    @Scheduled(cron = "@hourly")
+    @Scheduled(cron = "0 0/30 9-16 * * *")
     public void initAllStocksWithHistoricalData()
     {
         List<String> symbols = Arrays.stream(StockSymbols.values()).map(Enum::toString).toList();
@@ -148,7 +148,7 @@ public class StockService
     }
 
     @Async
-    @Scheduled(cron = "@daily")
+    @Scheduled(cron = "0 0 * * 1-5")
     public void getStocksDailyData()
     {
         List<String> symbols = Arrays.stream(StockSymbols.values()).map(Enum::toString).toList();

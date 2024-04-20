@@ -1,6 +1,7 @@
 package com.example.userservice.client;
 
 import com.example.userservice.dto.PortfolioDto;
+import com.example.userservice.model.Correlation;
 import com.example.userservice.model.EfficientFrontier;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,4 +17,7 @@ public interface PortfolioClient {
 
     @PostMapping(value = "/api/v1/portfolioAnalysis/getEfficientFrontier")
     EfficientFrontier getEfficientFrontier(@RequestBody PortfolioDto request);
+
+    @PostMapping(value = "/api/v1/portfolioAnalysis/getCorrelation")
+    Correlation[] getCorrelation(@RequestBody PortfolioDto request);
 }
